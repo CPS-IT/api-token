@@ -1,0 +1,33 @@
+<phpunit
+	backupGlobals="true"
+	backupStaticAttributes="false"
+	bootstrap="../../.Build/vendor/nimut/testing-framework/res/Configuration/UnitTestsBootstrap.php"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertWarningsToExceptions="true"
+	forceCoversAnnotation="false"
+	processIsolation="false"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnIncomplete="false"
+	stopOnSkipped="false"
+	verbose="false">
+
+	<testsuites>
+		<testsuite name="api-token tests">
+			<directory>../Unit/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="false">
+			<directory suffix=".php">../../Classes/</directory>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-text" target="php://stdout" showUncoveredFiles="true" />
+		<log type="coverage-html" target="../../.Build/log/coverage/" showUncoveredFiles="true" />
+		<log type="coverage-clover" target="../../.Build/log/coverage/clover.xml" showUncoveredFiles="true" />
+		<log type="junit" target="../../.Build/log/coverage/junit.xml" showUncoveredFiles="true" />
+	</logging>
+
+</phpunit>
