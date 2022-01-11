@@ -19,7 +19,7 @@ namespace Fr\ApiToken\Controller\Backend;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Fr\JohLib\Controller\Backend\AbstractBackendModuleController;
+use Fr\ApiToken\Controller\Backend\AbstractBackendModuleController;
 use Fr\ApiToken\Configuration\Extension;
 use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
 use Fr\ApiToken\Domain\Model\Token;

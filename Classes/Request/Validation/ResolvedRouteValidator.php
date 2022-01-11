@@ -7,20 +7,18 @@ namespace Fr\ApiToken\Request\Validation;
  * README.md file that was distributed with this source code.
  */
 
+use Fr\ApiToken\Routing\ApiPageArguments;
 use Psr\Http\Message\ServerRequestInterface;
 
-
-/**
- * Validates API Requests
- */
-interface RequestValidatorInterface
+class ResolvedRouteValidator implements RequestValidatorInterface
 {
     /**
-     * Returns true if request is
-     * valid in the scope of this validator
-     *
      * @param ServerRequestInterface $request
      * @return bool
      */
-    public function validate(ServerRequestInterface $request): bool;
+    public function validate(ServerRequestInterface $request): bool
+    {
+        $pageArguments = $request->getAttribute('routing');
+        return $pageArguments instanceof ApiPageArguments;
+    }
 }

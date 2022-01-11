@@ -7,6 +7,9 @@ services:
   Fr\ApiToken\:
     resource: '../Classes/*'
 
+  Fr\ApiToken\Middleware\ApiKeyAuthenticator:
+    public: true
+
   Fr\ApiToken\Command\GenerateTokenCommand:
     tags:
       - name: 'console.command'

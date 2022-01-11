@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Fr\ApiToken\Traits;
 
-use Fr\JohLib\Domain\Repository\RepositoryInterface;
+use Fr\ApiToken\Domain\Repository\RepositoryInterface;
 use Fr\ApiToken\Domain\Repository\TokenRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
