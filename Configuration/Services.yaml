@@ -4,5 +4,13 @@ services:
     autoconfigure: true
     public: false
 
-  Fr\FrToken\:
+  Fr\ApiToken\:
     resource: '../Classes/*'
+
+  Fr\ApiToken\Command\GenerateTokenCommand:
+    tags:
+      - name: 'console.command'
+        command: 'apitoken:generate'
+        description: 'Generate api token for authentication.'
+        # not required, defaults to false
+        hidden: false

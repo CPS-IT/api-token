@@ -9,6 +9,7 @@ namespace Fr\ApiToken\Configuration;
  */
 
 use DWenzel\T3extensionTools\Configuration\ExtensionConfiguration;
+use Fr\IkiProjects\Configuration\SettingsInterface as SI;
 
 final class Extension extends ExtensionConfiguration
 {
@@ -22,4 +23,11 @@ final class Extension extends ExtensionConfiguration
     public const NAME = 'ApiToken';
     public const VENDOR_NAME = 'Fr';
     public const EXTENSION_KEY = self::KEY;
+
+    /**
+     * SVG icons to register
+     */
+    protected const SVG_ICONS_TO_REGISTER = [
+        \Fr\ApiToken\Domain\Model\Token::TABLE_NAME => 'EXT:' . self::KEY . '/Resources/Public/Icons/Extension.svg',
+    ];
 }

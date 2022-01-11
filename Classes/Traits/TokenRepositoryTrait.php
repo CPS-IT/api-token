@@ -1,0 +1,59 @@
+<?php
+declare(strict_types=1);
+
+namespace Fr\ApiToken\Traits;
+
+use Fr\JohLib\Domain\Repository\RepositoryInterface;
+use Fr\ApiToken\Domain\Repository\TokenRepository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2020 Dirk Wenzel
+ *  All rights reserved
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the text file GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+/**
+ * Provides a token repository
+ * and injection method
+ */
+trait TokenRepositoryTrait
+{
+    /**
+     * @var RepositoryInterface|TokenRepository
+     */
+    protected $repository;
+
+    /**
+     * Inject a token repository
+     *
+     * @param TokenRepository $repository
+     */
+    public function injectTokenRepository(TokenRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     * @return TokenRepository
+     */
+    public function getRepository(): TokenRepository
+    {
+        if (!$this->repository instanceof TokenRepository) {
+            $this->repository = GeneralUtility::makeInstance(TokenRepository::class);
+        }
+        return $this->repository;
+    }
+
+}
