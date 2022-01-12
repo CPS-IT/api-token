@@ -50,6 +50,8 @@ class ApiKeyAuthenticator implements MiddlewareInterface
     }
 
     /**
+     * todo IMPORTANT, if $this->routeValidator->validate($request) fails (because request not having routing) DOOR IS OPEN!
+     *
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface

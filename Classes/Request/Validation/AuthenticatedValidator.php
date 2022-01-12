@@ -31,7 +31,7 @@ class AuthenticatedValidator implements RequestValidatorInterface
 
     public function __construct(Context $context = null)
     {
-        $this->context = $context ?? GeneralUtility::makeInstance(Context::class);
+       $this->context = $context ?? GeneralUtility::makeInstance(Context::class);
     }
 
     public function validate(ServerRequestInterface $request): bool

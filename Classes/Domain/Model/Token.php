@@ -17,32 +17,32 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
  */
 class Token extends AbstractDomainObject
 {
-    public const TABLE_NAME = 'tx_apitoken_domain_model_token';
+    public const TABLE_NAME = 'tx_apitoken_domain_model_token', IDENTIFIER = 'identifier';
 
     /**
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * @var string
      */
-    protected $identifier = '';
+    protected string $identifier = '';
 
     /**
      * @var string
      */
-    protected $hash = '';
+    protected string $hash = '';
 
     /**
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @var DateTime
      */
-    protected $validUntil;
+    protected DateTime $validUntil;
 
     /**
      * @return string

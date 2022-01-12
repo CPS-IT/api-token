@@ -20,25 +20,27 @@ namespace Fr\ApiToken\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use Fr\ApiToken\Domain\Model\Token;
-use TYPO3\CMS\Extbase\Persistence\Repository;
-
-/**
- * Class TokenRepository
- */
-class TokenRepository extends Repository
+class TokenRepository implements TokenRepositoryInterface
 {
-    protected $tableName = Token::TABLE_NAME;
 
     /**
-     * @param string $identifier
-     * @return array
+     * @inheritDoc
      */
     public function findOneByIdentifier(string $identifier): array
     {
-        $result = $this->findBy(['identifier' => $identifier]);
-        return reset($result) ?: [];
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $result = $queryBuilder
+            ->select('*')
+            ->from(self::TABLE_NAME)
+            ->where(
+                $queryBuilder->expr()->eq(self::IDENTIFIER_COLUMN, $queryBuilder->createNamedParameter($identifier))
+            )->execute()->fetchAssociative();
+
+        return $result ? :[];
     }
 
 }

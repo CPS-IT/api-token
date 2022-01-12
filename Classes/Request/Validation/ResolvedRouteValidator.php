@@ -7,8 +7,8 @@ namespace Fr\ApiToken\Request\Validation;
  * README.md file that was distributed with this source code.
  */
 
-use Fr\ApiToken\Routing\ApiPageArguments;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Routing\RouteResultInterface;
 
 class ResolvedRouteValidator implements RequestValidatorInterface
 {
@@ -19,6 +19,6 @@ class ResolvedRouteValidator implements RequestValidatorInterface
     public function validate(ServerRequestInterface $request): bool
     {
         $pageArguments = $request->getAttribute('routing');
-        return $pageArguments instanceof ApiPageArguments;
+        return $pageArguments instanceof RouteResultInterface;
     }
 }
