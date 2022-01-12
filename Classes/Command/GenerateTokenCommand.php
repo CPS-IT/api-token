@@ -22,6 +22,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
+/**
+ * Generates API credentials.
+ * Puts out identifier + token pair and persists identifier and hash value into database
+ *
+ * Usage:
+ * ./vendor/bin/typo3cms apitoken:generate
+ *
+ * Asks for token name,  a descriptive help to identify record, no technical usage.
+ * Asks for token description, a descriptive help to identify record, no technical usage.
+ *
+ * Puts out:
+    Your token was successfully generated.
+
+    Identifier: 4a6*******d
+
+    Secret: 7a5-*****c82
+
+    (Please keep information safely and secure. Token is shown only once.)
+
+ * Persists name, description, identifier, date of expiration (1 year) and hash value to verify token by API call.
+ *
+ */
 class GenerateTokenCommand extends Command
 {
     /**
@@ -131,14 +153,12 @@ class GenerateTokenCommand extends Command
         $this->persistenceManager->add($token);
         $this->persistenceManager->persistAll();
 
-        dump($token);
-
         if (!$json) {
             $this->io->success([
                 'Your token was successfully generated.',
                 'Identifier: ' . $identifier,
                 'Secret: ' . $secret,
-                '(Please keep those information safely and secure. Token is shown only once.)'
+                '(Please keep information safely and secure. Token is shown only once.)'
             ]);
         } else {
             $this->io->writeln(json_encode([
