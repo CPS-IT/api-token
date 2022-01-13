@@ -1,0 +1,23 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:at="http://typo3.org/ns/Fr/ApiToken/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<a class="btn btn-default t3js-record-delete" href="#"
+   data-button-ok-text="{f:translate(key: 'module.modal.deleteRecord.header', extensionName: 'ApiToken')}"
+   data-params="cmd[{tableName}][{record.uid}][delete]=1"
+   data-title="{at:be.recordTitle(record: record, tableName: tableName)}"
+   data-message="{f:translate(key: 'module.modal.deleteRecord.body', extensionName: 'ApiToken')}"
+>
+    {c:icon(identifier: 'actions-edit-delete')}
+    <f:if condition="{content}">
+        <f:then>
+            {content -> f:format.raw()}
+        </f:then>
+        <f:else if="!{hideLabel}">
+            {f:translate(key: 'module.button.delete', extensionName: 'ApiToken')}
+        </f:else>
+    </f:if>
+</a>
+
+</html>

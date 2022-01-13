@@ -43,4 +43,21 @@ class TokenRepository implements TokenRepositoryInterface
         return $result ? :[];
     }
 
+    public function findAll(): array
+    {
+        $record = [];
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $result = $queryBuilder
+            ->select('crdate','valid_until','uid','name','identifier','description')
+            ->from(self::TABLE_NAME)
+            ->execute();
+
+        while ($row = $result->fetchAssociative()) {
+            // Do something with that single row
+            $record[] = $row;
+        }
+        return $record;
+    }
+
+
 }

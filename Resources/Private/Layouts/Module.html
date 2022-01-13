@@ -1,0 +1,64 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:be.container>
+    <div class="module">
+        <div class="module-loading-indicator"></div>
+
+        <f:comment><!-- Header --></f:comment>
+        <div class="module-docheader t3js-module-docheader">
+            <div class="module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation row">
+                <f:if condition="{views}">
+                    <div class="module-docheader-bar-column-left col-xs-12 col-sm-3">
+                        <div class="form-inline">
+                            <div class="form-group form-group-sm">
+                                <f:be.menus.actionMenu additionalAttributes="{class: 'form-control t3-js-jumpMenuBox'}">
+                                    <f:for each="{views}" as="label" key="controller">
+                                        <f:if condition="{controller} == {currentView}">
+                                            <f:then>
+                                                <f:be.menus.actionMenuItem controller="{controller}" label="{label}" action="list"
+                                                                           additionalAttributes="{selected: 'selected'}" />
+                                            </f:then>
+                                            <f:else>
+                                                <f:be.menus.actionMenuItem controller="{controller}" label="{label}" action="list" />
+                                            </f:else>
+                                        </f:if>
+                                    </f:for>
+                                </f:be.menus.actionMenu>
+                            </div>
+                        </div>
+                    </div>
+                </f:if>
+            </div>
+            <div class="module-docheader-bar module-docheader-bar-buttons t3js-module-docheader-bar t3js-module-docheader-bar-buttons">
+                <f:comment><!-- Header Buttons left --></f:comment>
+                <div class="module-docheader-bar-column-left">
+                    <div class="btn-toolbar" role="toolbar">
+                        <f:render section="headerButtonsLeft" optional="1" />
+                    </div>
+                </div>
+
+                <f:comment><!-- Header buttons right --></f:comment>
+                <div class="module-docheader-bar-column-right">
+                    <div class="btn-toolbar" role="toolbar">
+                        <f:render section="headerButtonsRight" optional="1" />
+                    </div>
+                </div>
+            </div>
+
+            <f:comment><!-- Search form --></f:comment>
+            <div class="module-docheader-bar module-docheader-bar-search t3js-module-docheader-bar t3js-module-docheader-bar-search"
+                 id="db_list-searchbox-toolbar" {f:if(condition: overwriteDemand, else: 'style="display: none;"')}
+            >
+                <f:render section="searchForm" optional="1" />
+            </div>
+        </div>
+
+        <f:comment><!-- Main content --></f:comment>
+        <div class="module-body t3js-module-body">
+            <f:render section="main" />
+        </div>
+    </div>
+</f:be.container>
+
+</html>

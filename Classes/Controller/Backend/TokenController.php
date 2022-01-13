@@ -19,54 +19,78 @@ namespace Fr\ApiToken\Controller\Backend;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Fr\ApiToken\Controller\Backend\AbstractBackendModuleController;
 use Fr\ApiToken\Configuration\Extension;
 use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
 use Fr\ApiToken\Domain\Model\Token;
+use Fr\ApiToken\Domain\Repository\TokenRepository;
 use Fr\ApiToken\Traits\TokenServiceTrait;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-/**
- * Class TokenController
- */
-class TokenController extends AbstractBackendModuleController
+class TokenController extends ActionController
 {
     use TokenServiceTrait;
 
-    public const ROUTE = TokenModuleRegistration::ROUTE;
     public const TABLE_NAME = Token::TABLE_NAME;
 
-    /**
-     * @var SiteFinder
-     */
-    protected $siteFinder;
+    protected TokenRepository $repository;
+
 
     /**
-     * TokenController constructor.
-     *
-     * @param PageRenderer|null $pageRenderer
-     * @param SiteFinder|null $siteFinder
+     * @var ?PersistenceManagerInterface
      */
-    public function __construct(PageRenderer $pageRenderer = null, SiteFinder $siteFinder = null)
+    protected ?PersistenceManagerInterface $persistenceManager;
+    /**
+     * @param TokenRepository $repository
+     */
+    /**
+     * @param TokenRepository $repository
+     * @param PersistenceManagerInterface|null $persistenceManager
+     */
+    public function __construct(TokenRepository $repository, PersistenceManagerInterface $persistenceManager = null)
     {
-        parent::__construct($pageRenderer);
-        $this->siteFinder = $siteFinder ?? GeneralUtility::makeInstance(SiteFinder::class);
+        $this->repository = $repository;
+        $this->persistenceManager = $persistenceManager;
     }
 
     /**
+     * Displays list of tokens
+     *
+     * @param Token|null $newToken
+     * @throws \Exception
+     */
+    public function listAction()
+    {
+        $records = $this->repository->findAll();
+        $this->view->assignMultiple(
+            [
+                'records' => $records,
+                'tableAccess' => ['listingAllowed' => true],
+                'totalAmount'=> count($records),
+                'recordsPerPage'=> 20,
+                'route'=> '/',
+                'tableName' => \Fr\ApiToken\Domain\Model\Token::TABLE_NAME,
+                'isRestrictedView'=> true,
+                'isEditingAllowed'=> true
+            ]
+        );
+    }
+    /**
      * Displays s form for a new token
+     *
      * @param Token|null $newToken
      * @throws \Exception
      */
     public function newAction(Token $newToken = null)
     {
-        $newToken = $newToken ?? GeneralUtility::makeInstance(Token::class);
+        $newToken = $newToken ?? new Token();
         $secret = $this->tokenService->generateSecret();
         $hash = $this->tokenService->hash($secret);
         $identifier = $this->tokenService->generateIdentifier();
@@ -82,9 +106,7 @@ class TokenController extends AbstractBackendModuleController
                 'identifier' => $identifier,
                 'secret' => $secret,
                 'hash' => $hash,
-                'route' => static::ROUTE,
-                'newToken' => $newToken,
-                'sites' => $this->siteFinder->getAllSites()
+                'newToken' => $newToken
             ]
         );
     }
@@ -95,15 +117,23 @@ class TokenController extends AbstractBackendModuleController
      *
      * @param array $newToken
      * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
-     * @throws \Exception
      */
     public function createAction(array $newToken) {
         $dateTimeZone = new \DateTimeZone(date_default_timezone_get());
         $validUntil = new \DateTime('+1 year', $dateTimeZone);
 
         $newToken['valid_until'] = $validUntil->format('U');
-        $this->repository->add($newToken);
+
+        $token = GeneralUtility::makeInstance(Token::class)
+            ->setName($newToken['name'])
+            ->setDescription( $newToken['description'])
+            ->setIdentifier($newToken['identifier'])
+            ->setHash($newToken['hash'])
+            ->setValidUntil(new \DateTime('@'.$newToken['valid_until']));
+        $this->persistenceManager->add($token);
+
+        $this->persistenceManager->persistAll();
+
         $this->redirect('list');
     }
 

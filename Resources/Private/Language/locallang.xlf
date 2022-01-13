@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token">
+        <header />
+        <body>
+            <trans-unit id="label.name">
+                <source>Name</source>
+            </trans-unit>
+            <trans-unit id="label.secret">
+                <source>Secret Key</source>
+            </trans-unit>
+            <trans-unit id="label.hash">
+                <source>Hash</source>
+            </trans-unit>
+            <trans-unit id="label.site">
+                <source>Site</source>
+            </trans-unit>
+            <trans-unit id="message.saveIdentifierAndSecretNow">
+                <source>The field "Secret Key" contains the required secret for the authentication of requests to
+                    a REST API. Save this the identifier and secret now! The secret will
+                    not be displayed again and can not be restored.</source>
+            </trans-unit>
+            <trans-unit id="message.noTokensFound">
+                <source>Could not find any token.</source>
+            </trans-unit>
+            <trans-unit id="header.saveIdentifierAndSecret">
+                <source>Save identifier and secret</source>
+            </trans-unit>
+            <trans-unit id="label.valid_until">
+                <source>valid until</source>
+            </trans-unit>
+            <trans-unit id="label.identifier">
+                <source>Identifier</source>
+            </trans-unit>
+            <trans-unit id="label.description">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="button.submit">
+                <source>Submit</source>
+            </trans-unit>
+            <trans-unit id="button.edit">
+                <source>Edit</source>
+            </trans-unit>
+            <trans-unit id="button.cancel">
+                <source>Cancel</source>
+            </trans-unit>
+            <trans-unit id="button.newToken">
+                <source>Generate new token</source>
+            </trans-unit>
+
+            <trans-unit id="module.tokens.header">
+                <source>API tokens</source>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.header">
+                <source>No tokens found</source>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.body">
+                <source>There are no tokens available at the moment.</source>
+            </trans-unit>
+            <trans-unit id="module.tokenNew.header">
+                <source>Generate new API token</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

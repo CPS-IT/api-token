@@ -9,7 +9,7 @@ namespace Fr\ApiToken\Configuration;
  */
 
 use DWenzel\T3extensionTools\Configuration\ExtensionConfiguration;
-use Fr\IkiProjects\Configuration\SettingsInterface as SI;
+use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
 
 final class Extension extends ExtensionConfiguration
 {
@@ -18,6 +18,13 @@ final class Extension extends ExtensionConfiguration
      *
      */
     public const PLUGINS_TO_REGISTER = [];
+
+    /**
+     * Backend modules to register
+     */
+    public const MODULES_TO_REGISTER = [
+        TokenModuleRegistration::class
+    ];
 
     public const KEY = 'api_token';
     public const NAME = 'ApiToken';

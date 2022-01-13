@@ -1,0 +1,44 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="main">
+    <h1>{f:translate(key: 'module.tokens.header', default: 'Tokens')}</h1>
+
+    <f:flashMessages />
+
+    <f:comment><!-- Record list --></f:comment>
+    <f:if condition="{records} && {tableAccess.listingAllowed}">
+        <f:then>
+            <f:render partial="Backend/Common/RecordList" arguments="{
+                records: records,
+                totalAmount: count,
+                recordsPerPage: recordsPerPage,
+                route: route,
+                tableName: tableName,
+                isRestrictedView: isRestrictedView,
+                isEditingAllowed: isEditingAllowed
+            }" />
+        </f:then>
+        <f:else if="!{isListingAllowed}">
+            <f:render partial="Backend/Message/NoListingAllowed" />
+        </f:else>
+        <f:else>
+            <f:be.infobox state="-1" title="{f:translate(key: 'module.tokens.message.noTokensFound.header')}"
+                          message="{f:translate(key: 'module.tokens.message.noTokensFound.body')}"/>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:comment><!-- Header buttons --></f:comment>
+<f:section name="headerButtonsLeft">
+    <f:render partial="Backend/Link/NewToken" arguments="{
+        tableName: tableName,
+        route: route,
+        storagePid: storagePid,
+        buttonClass: 'btn-new btn-sm'
+    }" />
+</f:section>
+
+</html>

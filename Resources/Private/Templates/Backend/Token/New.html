@@ -1,0 +1,64 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="main">
+    <h1>{f:translate(key: 'module.tokenNew.header', default: 'Generate new API Token')}</h1>
+
+    <f:flashMessages />
+
+    <f:form action="create" objectName="newToken" object="{newToken}" method="post" id="tx-apitoken-newtoken-form">
+        <dl>
+            <f:form.hidden property="hash" value="{hash}"/>
+            <dt>
+                <label for="tx-apitoken-token-secret">
+                    <f:translate key="label.identifier" default="label.identifier"/>
+                </label>
+            </dt>
+            <dd>
+                <div id="tx-apitoken-token-identifier">{f:format.raw(value: '{identifier}')}</div>
+                <f:form.hidden property="identifier" value="{identifier}"/>
+            </dd>
+            <dt>
+                <label for="tx-apitoken-token-secret">
+                    <f:translate key="label.secret" default="label.secret"/>
+                </label>
+            </dt>
+            <dd>
+                <div id="tx-apitoken-token-secret">{f:format.raw(value: secret)}</div>
+            </dd>
+            <dt>
+                <label for="tx-apitoken-token-name">
+                    <f:translate key="label.name" default="label.name"/>
+                </label>
+            </dt>
+            <dd>
+                <f:form.textfield property="name" id="tx-apitoken-token-name" required="1" />
+            </dd>
+            <dt>
+                <label for="tx-apitoken-token-description">
+                    <f:translate key="label.description" default="label.description"/>
+                </label>
+            </dt>
+            <dd>
+                <f:form.textarea property="description" id="tx-apitoken-token-description"/>
+            </dd>
+        </dl>
+    </f:form>
+</f:section>
+
+<f:comment><!-- Header buttons --></f:comment>
+<f:section name="headerButtonsLeft">
+    <f:link.action action="list" class="btn btn-default btn-sm">
+        {c:icon(identifier: 'actions-close')}
+        {f:translate(key: 'button.cancel', default: 'button.cancel')}
+    </f:link.action>
+    <button type="submit" form="tx-apitoken-newtoken-form" class="btn btn-default btn-sm" id="tx-apitoken-newtoken-submit">
+        {c:icon(identifier: 'actions-document-save')}
+        {f:translate(key: 'button.submit')}
+    </button>
+</f:section>
+
+</html>

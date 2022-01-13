@@ -26,20 +26,19 @@ class TokenModuleRegistration implements ModuleRegistrationInterface
 {
     use ModuleRegistrationTrait;
 
-    public const ROUTE = 'site_JohRestToken';
+    public const ROUTE = 'site_ApiToken';
 
-    static protected $subModuleName = 'token';
-    static protected $mainModuleName = 'site';
-    static protected $vendorExtensionName = Extension::VENDOR_NAME . '.' . Extension::NAME;
-    static protected $controllerActions = [
-        'Backend\Token' => 'list,new,create,delete'
+    static protected string $subModuleName = 'generatesecret';
+    static protected string $mainModuleName = 'system';
+    static protected string $vendorExtensionName = Extension::VENDOR_NAME . '.' . Extension::NAME;
+    static protected array $controllerActions = [
+        \Fr\ApiToken\Controller\Backend\TokenController::class => 'list,new,create,delete'
     ];
 
-    static protected $position = 'bottom';
-    static protected $moduleConfiguration = [
+    static protected string $position = 'bottom';
+    static protected array $moduleConfiguration = [
         'access' => 'admin',
-        'icon' => 'EXT:joh_rest/Resources/Public/Icons/Extension.svg',
-        'labels' => 'LLL:EXT:joh_rest/Resources/Private/Language/locallang_mod_token.xlf',
+        'icon' => 'EXT:api_token/Resources/Public/Icons/Extension.svg',
+        'labels' => 'LLL:EXT:api_token/Resources/Private/Language/locallang_mod_token.xlf',
     ];
-
 }

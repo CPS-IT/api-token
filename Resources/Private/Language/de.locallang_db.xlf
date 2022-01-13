@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+    <file source-language="en" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token">
+        <header />
+        <body>
+            <trans-unit id="tabs.api">
+                <source>API</source>
+                <target>API</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token">
+                <source>API Token</source>
+                <source>API Schlüssel</source>
+            </trans-unit>
+
+            <trans-unit id="siteConfiguration.apiBasePath">
+                <source>API base path</source>
+                <target>API-Pfadsegment</target>
+            </trans-unit>
+
+            <trans-unit id="tx_apitoken_domain_model_token.name">
+                <source>Name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token.hash">
+                <source>Hash</source>
+                <target>Prüfsumme</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token.site">
+                <source>Site</source>
+                <target>Site</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token.valid_until">
+                <source>valid until</source>
+                <target>gültig bis</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token.identifier">
+                <source>Identifier</source>
+                <target>Schlüsselkennung</target>
+            </trans-unit>
+            <trans-unit id="tx_apitoken_domain_model_token.description">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

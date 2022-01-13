@@ -1,0 +1,16 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      xmlns:at="http://typo3.org/ns/Fr/ApiToken/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<a class="btn btn-default t3js-record-hide" href="#"
+   data-state="{f:if(condition: record.hidden, then: 'hidden', else: 'visible')}"
+   data-params="data[{tableName}][{record.uid}][hidden]={f:if(condition: record.hidden, then: '0', else: '1')}"
+   data-message="{f:translate(key: 'module.modal.deleteRecord.body', extensionName: 'ApiToken')}"
+   data-original-title="{f:translate(key: 'module.button.{f:if(condition: record.hidden, then: \'un\')}hide', extensionName: 'ApiToken')}"
+   data-toggle-title="{f:translate(key: 'module.button.{f:if(condition: record.hidden, else: \'un\')}hide', extensionName: 'ApiToken')}"
+>
+    {c:icon(identifier: 'actions-edit-{f:if(condition: record.hidden, then: \'un\')}hide')}
+</a>
+
+</html>

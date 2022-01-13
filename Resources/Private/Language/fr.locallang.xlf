@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="de" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token"
+          target-language="fr">
+        <header/>
+        <body>
+            <trans-unit id="label.name" approved="yes">
+                <source>Name</source>
+                <target state="final">Nom</target>
+            </trans-unit>
+            <trans-unit id="label.secret" approved="yes">
+                <source>Secret Key</source>
+                <target state="final">Clé secrète</target>
+            </trans-unit>
+            <trans-unit id="label.hash" approved="yes">
+                <source>Hash</source>
+                <target state="final">Hash</target>
+            </trans-unit>
+            <trans-unit id="label.site" approved="yes">
+                <source>Site</source>
+                <target state="final">Site</target>
+            </trans-unit>
+            <trans-unit id="message.saveIdentifierAndSecretNow" approved="yes">
+                <source>The field "Secret Key" contains the required secret for the authentication of requests to
+                    a REST API. Save this the identifier and secret now! The secret will
+                    not be displayed again and can not be restored.
+                </source>
+                <target state="final">Le champ "Clé secrète" contient le secret requis pour l'authentification des
+                    demandes adressées à
+                    l'API REST. Sauvegardez l'identifiant et le secret maintenant ! Le secret va
+                    ne peut pas être affiché à nouveau et ne peut pas être restauré.
+                </target>
+            </trans-unit>
+            <trans-unit id="message.noTokensFound" approved="yes">
+                <source>Could not find any token.</source>
+                <target state="final">Je n'ai trouvé aucun jeton.</target>
+            </trans-unit>
+            <trans-unit id="header.saveIdentifierAndSecret" approved="yes">
+                <source>Save identifier and secret</source>
+                <target state="final">Sauvegarder l'identifiant et le secret</target>
+            </trans-unit>
+            <trans-unit id="label.valid_until" approved="yes">
+                <source>valid until</source>
+                <target state="final">valable jusqu'au</target>
+            </trans-unit>
+            <trans-unit id="label.identifier" approved="yes">
+                <source>Identifier</source>
+                <target state="final">Identifiant</target>
+            </trans-unit>
+            <trans-unit id="label.description" approved="yes">
+                <source>Description</source>
+                <target state="final">Description</target>
+            </trans-unit>
+            <trans-unit id="button.submit" approved="yes">
+                <source>Submit</source>
+                <target state="final">Soumettre</target>
+            </trans-unit>
+            <trans-unit id="button.edit" approved="yes">
+                <source>Edit</source>
+                <target state="final">Edit</target>
+            </trans-unit>
+            <trans-unit id="button.cancel" approved="yes">
+                <source>Cancel</source>
+                <target state="final">Annuler</target>
+            </trans-unit>
+            <trans-unit id="button.newToken" approved="yes">
+                <source>Generate new token</source>
+                <target state="final">Générer un nouveau jeton</target>
+            </trans-unit>
+            <trans-unit id="module.tokens.header" approved="yes">
+                <source>API tokens</source>
+                <target state="final">Jetons API</target>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.header" approved="yes">
+                <source>No tokens found</source>
+                <target state="final">Pas de jetons trouvés</target>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.body" approved="yes">
+                <source>There are no tokens available at the moment.</source>
+                <target state="final">Il n'y a pas de jetons disponibles pour le moment.</target>
+            </trans-unit>
+            <trans-unit id="module.tokenNew.header" approved="yes">
+                <source>Generate new API token</source>
+                <target state="final">Générer un nouveau jeton API</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
