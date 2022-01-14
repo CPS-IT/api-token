@@ -1,0 +1,10 @@
+2022-01-14         [RELEASE] Release of api_token 0.7.0 (Arend Maubach)
+2022-01-14 bee6bfe fixing DI (Arend Maubach)
+2022-01-14 7a77449 refactoring, cleaning up (Arend Maubach)
+2022-01-13 1a42da5 [WIP] CRUD im BE (Arend Maubach)
+2022-01-12 fc13ba5 adding external call and some documentation (Arend Maubach)
+2022-01-12 0779fdb [WIP] Token auth (Arend Maubach)
+2022-01-11 cf3c742 [WIP] validating middleware (Arend Maubach)
+2022-01-11 194f371 [WIP] write token by command controller (Arend Maubach)
+
+
