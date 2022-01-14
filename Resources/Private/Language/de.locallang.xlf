@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token">
+        <header />
+        <body>
+            <trans-unit id="label.name">
+            <source>Name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="label.secret">
+                <source>Secret Key</source>
+                <target>Geheimer Schlüssel</target>
+            </trans-unit>
+            <trans-unit id="label.hash">
+                <source>Hash</source>
+                <target>Prüfsumme</target>
+            </trans-unit>
+            <trans-unit id="label.site">
+                <source>Site</source>
+                <target>Site</target>
+            </trans-unit>
+            <trans-unit id="message.saveIdentifierAndSecretNow">
+                <source>The field "Secret Key" contains the required secret for the authentication of requests to
+                a REST API. Save this the identifier and secret now! The secret will
+                not be displayed again and can not be restored.</source>
+                <target>Das Feld "Geheimer Schlüssel" enthält das Geheimnis für die Authentifizierung von Anfragen bei
+                    der REST API.
+                    Kopiere die Kennung und den geheimen Schlüssel jetzt! Es wird nicht noch einmal angezeigt und kann
+                    nicht wiederhergestellt werden.</target>
+            </trans-unit>
+            <trans-unit id="message.noTokensFound">
+                <source>Could not find any token.</source>
+                <target>Es konnten keine Schlüssel gefunden werden.</target>
+            </trans-unit>
+
+            <trans-unit id="header.saveIdentifierAndSecret">
+                <source>Save identifier and secret key</source>
+                <target>Speichere die Schlüsselkennung und den geheimen Schlüssel</target>
+            </trans-unit>
+
+            <trans-unit id="label.valid_until">
+                <source>valid until</source>
+                <target>gültig bis</target>
+            </trans-unit>
+            <trans-unit id="label.identifier">
+                <source>Identifier</source>
+                <target>Schlüsselkennung</target>
+            </trans-unit>
+            <trans-unit id="label.description">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+            <trans-unit id="button.submit">
+                <source>Submit</source>
+                <target>Absenden</target>
+            </trans-unit>
+            <trans-unit id="button.edit">
+                <source>Edit</source>
+                <target>Bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="button.cancel">
+                <source>Cancel</source>
+                <target>Abbrechen</target>
+            </trans-unit>
+            <trans-unit id="button.newToken">
+                <source>Generate new token</source>
+                <target>Neuen Schlüssel generieren</target>
+            </trans-unit>
+
+            <trans-unit id="module.tokens.header">
+                <source>API tokens</source>
+                <target>API-Token</target>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.header">
+                <source>No tokens found</source>
+                <target>Keine Token gefunden</target>
+            </trans-unit>
+            <trans-unit id="module.tokens.message.noTokensFound.body">
+                <source>There are no tokens available at the moment.</source>
+                <target>Es sind zurzeit keine Token vorhanden.</target>
+            </trans-unit>
+            <trans-unit id="module.tokenNew.header">
+                <source>Generate new API token</source>
+                <target>Neuen API-Token generieren</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

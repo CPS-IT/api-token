@@ -4,5 +4,25 @@ services:
     autoconfigure: true
     public: false
 
-  Fr\FrToken\:
+  Fr\ApiToken\:
     resource: '../Classes/*'
+
+  Fr\ApiToken\Middleware\ApiKeyAuthenticator:
+    public: true
+
+  Fr\Controller\Backend\TokenController:
+    public: true
+
+  Fr\ApiToken\Service\TokenBuildService:
+    public: true
+
+  Fr\ApiToken\Domain\Repository\TokenRepository:
+    public: true
+
+  Fr\ApiToken\Command\GenerateTokenCommand:
+    tags:
+      - name: 'console.command'
+        command: 'apitoken:generate'
+        description: 'Generate api token for authentication.'
+        # not required, defaults to false
+        hidden: false

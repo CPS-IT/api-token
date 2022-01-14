@@ -1,0 +1,17 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:link.action action="new" class="btn btn-default {buttonClass}" id="tx-apitoken-button-new-token">
+    {c:icon(identifier: 'actions-add')}
+    <f:if condition="{content}">
+        <f:then>
+            {content -> f:format.raw()}
+        </f:then>
+        <f:else if="!{hideLabel}">
+            {f:translate(key: 'button.newToken')}
+        </f:else>
+    </f:if>
+</f:link.action>
+
+</html>
