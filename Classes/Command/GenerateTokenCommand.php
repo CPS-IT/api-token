@@ -5,22 +5,19 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-
 namespace Fr\ApiToken\Command;
 
-use Fr\ApiToken\Domain\Model\Token;
+use Fr\ApiToken\Domain\Repository\TokenRepository;
+use Fr\ApiToken\Service\TokenBuildService;
 use Fr\ApiToken\Service\TokenService;
+use Fr\ApiToken\Service\TokenServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Generates API credentials.
@@ -52,14 +49,20 @@ class GenerateTokenCommand extends Command
     protected $io;
 
     /**
-     * @var TokenService
+     * @var ?TokenService
      */
-    protected $tokenService;
+    protected ?TokenService $tokenService;
 
     /**
-     * @var PersistenceManagerInterface
+     * @param ?TokenRepository $repository
      */
-    protected $persistenceManager;
+    protected ?TokenRepository $repository;
+
+    /**
+     * @var ?TokenBuildService
+     */
+    protected ?TokenBuildService $tokenBuildService;
+
 
     /**
      * {@inheritDoc}
@@ -67,12 +70,13 @@ class GenerateTokenCommand extends Command
      * @param string|null $name
      * @param TokenService|null $tokenService
      */
-    public function __construct(string $name = null, TokenService $tokenService = null, PersistenceManagerInterface $persistenceManager = null)
+    public function __construct(string $name = null, TokenBuildService $tokenBuildService = null, TokenService $tokenService = null, TokenRepository $repository = null)
     {
         parent::__construct($name);
 
         $this->tokenService = $tokenService ?? GeneralUtility::makeInstance(TokenService::class);
-        $this->persistenceManager = $persistenceManager ?? GeneralUtility::makeInstance(ObjectManager::class)->get(PersistenceManagerInterface::class);
+        $this->tokenBuildService = $tokenBuildService ?? GeneralUtility::makeInstance(TokenBuildService::class);
+        $this->repository = $repository ??  GeneralUtility::makeInstance(TokenRepository::class);
     }
 
     protected function configure(): void
@@ -114,8 +118,6 @@ class GenerateTokenCommand extends Command
         $description = $input->getOption('description') ?? null;
         $json = (bool) $input->getOption('json');
 
-        // Process "site" option
-
         // Process "name" option
         $name = $this->processName($name);
         if ($name === null) {
@@ -141,17 +143,13 @@ class GenerateTokenCommand extends Command
         $secret = $this->tokenService->generateSecret();
         $identifier = $this->tokenService->generateIdentifier();
         $hash = $this->tokenService->hash($secret);
-        $validUntil = new \DateTime('+1 year', new \DateTimeZone(date_default_timezone_get()));
 
-        // Build and persist token
-        $token = GeneralUtility::makeInstance(Token::class)
-            ->setName($name)
-            ->setDescription($description)
-            ->setIdentifier($identifier)
-            ->setHash($hash)
-            ->setValidUntil($validUntil);
-        $this->persistenceManager->add($token);
-        $this->persistenceManager->persistAll();
+        $this->repository->persistNewToken(
+            $this->tokenBuildService->buildInitialToken($name,
+                $description,
+                $identifier,
+                $hash)
+        );
 
         if (!$json) {
             $this->io->success([

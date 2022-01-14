@@ -1,37 +1,22 @@
 <?php
 declare(strict_types=1);
+/**
+ * This file is part of the iki Extension for TYPO3 CMS.
+ *
+ * For the full copyright and license information, please read the
+ * README.md file that was distributed with this source code.
+ */
 namespace Fr\ApiToken\Controller\Backend;
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2020 Dirk Wenzel
- *  All rights reserved
- *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- * A copy is found in the text file GPL.txt and important notices to the license
- * from the author is found in LICENSE.txt distributed with these scripts.
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-
 use Fr\ApiToken\Configuration\Extension;
-use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
 use Fr\ApiToken\Domain\Model\Token;
 use Fr\ApiToken\Domain\Repository\TokenRepository;
+use Fr\ApiToken\Service\TokenBuildService;
 use Fr\ApiToken\Traits\TokenServiceTrait;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
-use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class TokenController extends ActionController
@@ -40,55 +25,47 @@ class TokenController extends ActionController
 
     public const TABLE_NAME = Token::TABLE_NAME;
 
+    /**
+     * @param TokenRepository $repository
+     */
     protected TokenRepository $repository;
 
+    /**
+     * @var ?TokenBuildService
+     */
+    protected ?TokenBuildService $tokenBuildService;
 
-    /**
-     * @var ?PersistenceManagerInterface
-     */
-    protected ?PersistenceManagerInterface $persistenceManager;
-    /**
-     * @param TokenRepository $repository
-     */
-    /**
-     * @param TokenRepository $repository
-     * @param PersistenceManagerInterface|null $persistenceManager
-     */
-    public function __construct(TokenRepository $repository, PersistenceManagerInterface $persistenceManager = null)
+    public function __construct( TokenBuildService $tokenBuildService = null, TokenRepository $repository = null)
     {
-        $this->repository = $repository;
-        $this->persistenceManager = $persistenceManager;
+
+        $this->tokenBuildService = $tokenBuildService ?? GeneralUtility::makeInstance(TokenBuildService::class);
+        $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);
     }
 
     /**
      * Displays list of tokens
-     *
-     * @param Token|null $newToken
-     * @throws \Exception
      */
-    public function listAction()
+    public function listAction(): void
     {
-        $records = $this->repository->findAll();
+        $records = $this->repository->findAllRecords();
+
         $this->view->assignMultiple(
             [
                 'records' => $records,
-                'tableAccess' => ['listingAllowed' => true],
-                'totalAmount'=> count($records),
-                'recordsPerPage'=> 20,
+                'tokenIconIdentifier' => Extension::TOKEN_SVG,
                 'route'=> '/',
                 'tableName' => \Fr\ApiToken\Domain\Model\Token::TABLE_NAME,
-                'isRestrictedView'=> true,
-                'isEditingAllowed'=> true
             ]
         );
     }
+
     /**
      * Displays s form for a new token
      *
      * @param Token|null $newToken
      * @throws \Exception
      */
-    public function newAction(Token $newToken = null)
+    public function newAction(Token $newToken = null): void
     {
         $newToken = $newToken ?? new Token();
         $secret = $this->tokenService->generateSecret();
@@ -117,35 +94,19 @@ class TokenController extends ActionController
      *
      * @param array $newToken
      * @throws StopActionException
+     * @throws \Exception
      */
-    public function createAction(array $newToken) {
-        $dateTimeZone = new \DateTimeZone(date_default_timezone_get());
-        $validUntil = new \DateTime('+1 year', $dateTimeZone);
-
-        $newToken['valid_until'] = $validUntil->format('U');
-
-        $token = GeneralUtility::makeInstance(Token::class)
-            ->setName($newToken['name'])
-            ->setDescription( $newToken['description'])
-            ->setIdentifier($newToken['identifier'])
-            ->setHash($newToken['hash'])
-            ->setValidUntil(new \DateTime('@'.$newToken['valid_until']));
-        $this->persistenceManager->add($token);
-
-        $this->persistenceManager->persistAll();
-
+    public function createAction(array $newToken): void
+    {
+        $this->repository->persistNewToken(
+            $this->tokenBuildService->buildInitialToken(
+                $newToken['name'],
+                $newToken['description'],
+                $newToken['identifier'],
+                $newToken['hash']
+            )
+        );
         $this->redirect('list');
     }
 
-    /**
-     * Delete a token
-     *
-     * @param int $token
-     * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
-     */
-    public function deleteAction(int $token) {
-        $this->repository->remove($token);
-        $this->redirect('list');
-    }
 }

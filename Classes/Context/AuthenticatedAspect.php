@@ -8,11 +8,9 @@
 namespace Fr\ApiToken\Context;
 
 use DateTimeImmutable;
-use Fr\ApiToken\Context\AspectPropertyAccessTrait;
 use Fr\ApiToken\Authentication\AuthenticationInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\SingletonInterface;
-
 
 /**
  * Aspect contains information about the authentication status of
@@ -24,9 +22,7 @@ class AuthenticatedAspect implements AspectInterface, SingletonInterface
     use AspectPropertyAccessTrait;
 
     public const ASPECT_NAME = 'RestApiAuthenticated';
-
     public const MESSAGE_INVALID_PROPERTY = 'Invalid property %s in class %s';
-
     public const METHOD_NONE = 'none';
 
     /**

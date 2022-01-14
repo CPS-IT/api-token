@@ -5,11 +5,9 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-
 namespace Fr\ApiToken\Domain\Model;
 
 use DateTime;
-use Fr\ApiToken\Configuration\SettingsInterface as SI;
 use TYPO3\CMS\Extbase\DomainObject\AbstractDomainObject;
 
 /**
@@ -40,9 +38,10 @@ class Token extends AbstractDomainObject
     protected string $description = '';
 
     /**
-     * @var DateTime
+     * Must be nullable for data mapper
+     * @var ?DateTime
      */
-    protected DateTime $validUntil;
+    protected ?DateTime $validUntil = null;
 
     /**
      * @return string
@@ -135,5 +134,4 @@ class Token extends AbstractDomainObject
         $this->validUntil = $validUntil;
         return $this;
     }
-
 }

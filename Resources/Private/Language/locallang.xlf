@@ -60,6 +60,40 @@
             <trans-unit id="module.tokenNew.header">
                 <source>Generate new API token</source>
             </trans-unit>
+
+            <trans-unit id="module.token.name">
+                <source>Name</source>
+            </trans-unit>
+            <trans-unit id="module.token.valid_until">
+                <source>Valid Until</source>
+            </trans-unit>
+            <trans-unit id="module.token.identifier">
+                <source>Identifier</source>
+            </trans-unit>
+            <trans-unit id="module.token.crdate">
+                <source>Created</source>
+            </trans-unit>
+            <trans-unit id="module.token.state">
+                <source>State</source>
+            </trans-unit>
+            <trans-unit id="module.token.state.active">
+                <source>active</source>
+            </trans-unit>
+            <trans-unit id="module.token.state.valid">
+                <source>valid in time</source>
+            </trans-unit>
+            <trans-unit id="module.token.state.invalid">
+                <source>invalid</source>
+            </trans-unit>
+
+
+
+
+
+            <trans-unit id="module.button.edit">
+                <source>Edit</source>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

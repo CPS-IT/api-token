@@ -85,14 +85,6 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         );
     }
 
-    public function testValidUntilInitiallyReturnsDateTimeImmutable()
-    {
-        $this->assertInstanceOf(
-            DateTimeImmutable::class,
-            $this->subject->validUntil()
-        );
-    }
-
     public function testValidUntilInitiallyReturnsPastDateTime()
     {
         $now = new DateTimeImmutable('now');
@@ -100,19 +92,6 @@ class ApiKeyAuthenticationTest extends UnitTestCase
 
         $this->assertTrue(
             $now > $validUntil
-        );
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function testFromHeaderReturnsHeaderAwareInstance()
-    {
-        $value = 'bar';
-
-        $this->assertInstanceOf(
-            HeaderAwareInterface::class,
-            $this->subject->fromHeader($value)
         );
     }
 
@@ -155,7 +134,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
 
         $this->tokenRepository->expects($this->once())
             ->method('findOneByIdentifier')
-            ->with($identifier)
+            ->with([$identifier])
             ->willReturn($emptyResultFromRepository);
 
         $this->subject->withIdentifier($identifier);
@@ -199,13 +178,13 @@ class ApiKeyAuthenticationTest extends UnitTestCase
 
         $this->tokenRepository->expects($this->once())
             ->method('findOneByIdentifier')
-            ->with($identifier)
+            ->with([$identifier])
             ->willReturn($validRecord);
         $this->subject->withIdentifier($identifier);
 
         $this->tokenService->expects($this->once())
             ->method('checK')
-            ->with($validSecret, $hashOfSecret)
+            ->with([$validSecret, $hashOfSecret])
             ->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);

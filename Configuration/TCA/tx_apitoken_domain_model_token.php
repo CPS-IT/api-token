@@ -19,10 +19,10 @@ return [
         'typeicon_classes' => [
             'default' => $tableName,
         ],
-        'searchFields' => 'name, identifier,site,desciption',
+        'searchFields' => 'name,identifier,description',
     ],
     'interface' => [
-        'showRecordFieldList' => 'name,hash,identifier,valid_until,site,description',
+        'showRecordFieldList' => 'name,identifier,valid_until,description',
     ],
     'columns' => [
         'hidden' => [
@@ -46,21 +46,16 @@ return [
          */
         'name' => [
             'label' => \Fr\ApiToken\Configuration\Localization::forField('name', $tableName),
+            'exclude' => 1,
             'config' => [
                 'type' => 'input',
                 'max' => 255,
                 'eval' => 'trim,required',
             ],
         ],
-        'site' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('site', $tableName),
-            'config' => [
-                'type' => 'input',
-                'readOnly' => true
-            ],
-        ],
         'hash' => [
             'label' => \Fr\ApiToken\Configuration\Localization::forField('hash', $tableName),
+            'exclude' => 1,
             'config' => [
                 'type' => 'input',
                 'readOnly' => true
@@ -68,6 +63,7 @@ return [
         ],
         'identifier' => [
             'label' => \Fr\ApiToken\Configuration\Localization::forField('identifier', $tableName),
+            'exclude' => 1,
             'config' => [
                 'type' => 'input',
                 'readOnly' => true,
@@ -75,6 +71,7 @@ return [
         ],
         'valid_until' => [
             'label' => \Fr\ApiToken\Configuration\Localization::forField('valid_until', $tableName),
+            'exclude' => 1,
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
@@ -85,6 +82,7 @@ return [
         ],
         'description' => [
             'label' => \Fr\ApiToken\Configuration\Localization::forField('description', $tableName),
+            'exclude' => 1,
             'config' => [
                 'type' => 'text',
                 'max' => 1024,
@@ -98,9 +96,7 @@ return [
             'showitem' => '
                 --div--;' . \Fr\ApiToken\Configuration\Localization::forTab('general', true) . ',
                     name,
-                    site,
                     identifier,
-                    hash,
                     valid_until,
                     description,
                 --div--;' . \Fr\ApiToken\Configuration\Localization::forTab('access', true) . ',

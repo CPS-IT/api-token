@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
-namespace Fr\ApiToken\Http;
 /**
  * This file is part of the "ApiToken" Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+namespace Fr\ApiToken\Http;
 
 use TYPO3\CMS\Core\Http\JsonResponse;
 

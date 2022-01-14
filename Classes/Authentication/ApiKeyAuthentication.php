@@ -1,17 +1,18 @@
 <?php
-namespace Fr\ApiToken\Authentication;
 /**
  * This file is part of the iki Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+namespace Fr\ApiToken\Authentication;
 
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use Fr\ApiToken\Configuration\RestApiInterface;
 use Fr\ApiToken\Domain\Repository\TokenRepository;
+use Fr\ApiToken\Domain\Repository\TokenRepositoryInterface;
 use Fr\ApiToken\Exception\InvalidHttpMethodException;
 use Fr\ApiToken\Service\TokenService;
 use Fr\ApiToken\Service\TokenServiceInterface;
@@ -39,6 +40,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      * @var TokenServiceInterface
      */
     protected $tokenService;
+
 
     /**
      * @var string
@@ -88,7 +90,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     public function withIdentifier(string $identifier):self
     {
         $this->identifier = $identifier;
-        $this->token = $this->repository->findOneByIdentifier($this->identifier);
+        $this->token = $this->repository->findOneRecordByIdentifier($this->identifier);
 
         return $this;
     }

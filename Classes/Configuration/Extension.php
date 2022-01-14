@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
-namespace Fr\ApiToken\Configuration;
 /**
  * This file is part of the iki Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+namespace Fr\ApiToken\Configuration;
 
 use DWenzel\T3extensionTools\Configuration\ExtensionConfiguration;
 use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
@@ -34,7 +34,8 @@ final class Extension extends ExtensionConfiguration
     /**
      * SVG icons to register
      */
+    public const TOKEN_SVG = \Fr\ApiToken\Domain\Model\Token::TABLE_NAME;
     protected const SVG_ICONS_TO_REGISTER = [
-        \Fr\ApiToken\Domain\Model\Token::TABLE_NAME => 'EXT:' . self::KEY . '/Resources/Public/Icons/Extension.svg',
+        self::TOKEN_SVG => 'EXT:' . self::KEY . '/Resources/Public/Icons/tx_apitoken_domain_model_token.svg',
     ];
 }
