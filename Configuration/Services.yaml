@@ -13,6 +13,9 @@ services:
   Fr\Controller\Backend\TokenController:
     public: true
 
+  Fr\ApiToken\Service\TokenBuildService:
+    public: true
+
   Fr\ApiToken\Domain\Repository\TokenRepository:
     public: true
 

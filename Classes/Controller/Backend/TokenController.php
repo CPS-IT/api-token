@@ -31,13 +31,12 @@ class TokenController extends ActionController
     protected TokenRepository $repository;
 
     /**
-     * @var ?TokenBuildService
+     * @var TokenBuildService
      */
-    protected ?TokenBuildService $tokenBuildService;
+    protected TokenBuildService $tokenBuildService;
 
-    public function __construct( TokenBuildService $tokenBuildService = null, TokenRepository $repository = null)
+    public function __construct(?TokenBuildService $tokenBuildService = null, ?TokenRepository $repository = null)
     {
-
         $this->tokenBuildService = $tokenBuildService ?? GeneralUtility::makeInstance(TokenBuildService::class);
         $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);
     }
