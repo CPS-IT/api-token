@@ -1,13 +1,13 @@
 {
   "name": "fr/api-token",
   "description": "Generate and validate token auth for api requests.",
-  "homepage": "https://gitlab.321.works/cps-it/api-token.git",
+  "homepage": "https://gitlab.321.works/cps-it/api_token.git",
   "license": "GPL-2.0-or-later",
   "type": "typo3-cms-extension",
   "repositories": {
     "fr-utility": {
       "type": "vcs",
-      "url": "git@gitlab.321.works:cps-it/api-token.git"
+      "url": "git@gitlab.321.works:cps-it/api_token.git"
     }
   },
   "require": {
