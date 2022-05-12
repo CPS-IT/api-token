@@ -12,10 +12,11 @@
   },
   "require": {
     "typo3/cms-core": "^10.4",
-    "ramsey/uuid": "^4.0"
+    "ramsey/uuid": "^4.0",
+    "dwenzel/t3extension-tools": "^1.7"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master",
+    "roave/security-advisories": "dev-latest",
     "nimut/testing-framework": "^4.0 || ^5.0"
   },
   "extra": {
