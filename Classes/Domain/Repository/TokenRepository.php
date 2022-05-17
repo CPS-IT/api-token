@@ -8,7 +8,7 @@ declare(strict_types=1);
  */
 namespace Fr\ApiToken\Domain\Repository;
 
-use ApacheSolrForTypo3\Solr\System\Data\DateTime;
+use DateTime;
 use Fr\ApiToken\Domain\Model\Token;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
