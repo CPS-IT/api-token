@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
@@ -14,8 +14,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Validates for any authentication
- * Authentication has to be done in the middleware stack
- * before thish validator is called.
+ *
+ * It has to be done beforehand.
  */
 class AuthenticatedValidator implements RequestValidatorInterface
 {
@@ -48,6 +48,4 @@ class AuthenticatedValidator implements RequestValidatorInterface
 
         return false;
     }
-
-
 }
