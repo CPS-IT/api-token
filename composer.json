@@ -5,13 +5,13 @@
   "license": "GPL-2.0-or-later",
   "type": "typo3-cms-extension",
   "require": {
-    "typo3/cms-core": "^10.4",
+    "typo3/cms-core": "^10.4||^11.5",
     "ramsey/uuid": "^4.0",
     "dwenzel/t3extension-tools": "^1.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "nimut/testing-framework": "^4.0 || ^5.0"
+    "nimut/testing-framework": "^4.0 || ^5.0 || ^5.2"
   },
   "extra": {
     "typo3/cms": {
