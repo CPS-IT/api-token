@@ -29,6 +29,10 @@ use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Config\ResourceCheckerInterface;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\QueryRestrictionContainerInterface;
+use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Class ApiKeyAuthenticationTest
@@ -50,15 +54,27 @@ class ApiKeyAuthenticationTest extends UnitTestCase
      */
     protected $tokenService;
 
+    protected PersistenceManagerInterface $persistenceManager;
+    protected QueryBuilder $queryBuilder;
+    protected QueryRestrictionContainerInterface $restrictionContainer;
+
     /**
      * @throws \ReflectionException
      */
     public function setUp(): void
     {
+        $this->restrictionContainer = $this->getMockForAbstractClass(QueryRestrictionContainerInterface::class);
+        $this->persistenceManager = $this->getMockForAbstractClass(PersistenceManagerInterface::class);
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getRestrictions', 'select', 'from', 'where', 'expr', 'execute', 'createNamedParameter'])
+            ->getMock();
+        $this->queryBuilder->method('getRestrictions')->willReturn($this->restrictionContainer);
+        $this->restrictionContainer->method('removeAll')->willReturn($this->restrictionContainer);
         $this->tokenService = $this->getMockForAbstractClass(TokenServiceInterface::class);
         $this->tokenRepository = $this->getMockBuilder(TokenRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByIdentifier'])
+            ->setConstructorArgs([$this->persistenceManager, $this->queryBuilder])
+            ->addMethods(['findOneByIdentifier'])
             ->getMock();
         $this->subject = new ApiKeyAuthentication($this->tokenService, $this->tokenRepository);
     }
