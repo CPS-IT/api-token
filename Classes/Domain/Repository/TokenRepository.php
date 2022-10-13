@@ -25,10 +25,10 @@ class TokenRepository implements TokenRepositoryInterface
      */
     protected ?PersistenceManagerInterface $persistenceManager;
 
-    public function __construct(PersistenceManagerInterface $persistenceManager)
+    public function __construct(PersistenceManagerInterface $persistenceManager, QueryBuilder $queryBuilder = null)
     {
         $this->persistenceManager = $persistenceManager;
-        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $this->queryBuilder = $queryBuilder ?? GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
         $this->queryBuilder
             ->getRestrictions()
             ->removeAll()
