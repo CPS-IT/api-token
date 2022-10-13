@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Controller\Backend;
+namespace CPSIT\ApiToken\Controller\Backend;
 
-use Fr\ApiToken\Configuration\Extension;
-use Fr\ApiToken\Domain\Model\Token;
-use Fr\ApiToken\Domain\Repository\TokenRepository;
-use Fr\ApiToken\Service\TokenBuildService;
-use Fr\ApiToken\Traits\TokenServiceTrait;
+use CPSIT\ApiToken\Configuration\Extension;
+use CPSIT\ApiToken\Domain\Model\Token;
+use CPSIT\ApiToken\Domain\Repository\TokenRepository;
+use CPSIT\ApiToken\Service\TokenBuildService;
+use CPSIT\ApiToken\Traits\TokenServiceTrait;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -53,7 +53,7 @@ class TokenController extends ActionController
                 'records' => $records,
                 'tokenIconIdentifier' => Extension::TOKEN_SVG,
                 'route'=> '/',
-                'tableName' => \Fr\ApiToken\Domain\Model\Token::TABLE_NAME,
+                'tableName' => \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME,
             ]
         );
     }

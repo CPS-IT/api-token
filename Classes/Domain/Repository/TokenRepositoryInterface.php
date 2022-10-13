@@ -1,13 +1,13 @@
 <?php
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Domain\Repository;
+namespace CPSIT\ApiToken\Domain\Repository;
 
-use Fr\ApiToken\Domain\Model\Token;
+use CPSIT\ApiToken\Domain\Model\Token;
 
 interface TokenRepositoryInterface
 {

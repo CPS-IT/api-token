@@ -1,22 +1,17 @@
 {
-  "name": "fr/api-token",
+  "name": "cpsit/api-token",
   "description": "Generate and validate token auth for api requests.",
-  "homepage": "https://gitlab.321.works/cps-it/api_token.git",
+  "homepage": "https://github.com/CPS-IT/api-token",
   "license": "GPL-2.0-or-later",
   "type": "typo3-cms-extension",
-  "repositories": {
-    "fr-utility": {
-      "type": "vcs",
-      "url": "git@gitlab.321.works:cps-it/api_token.git"
-    }
-  },
   "require": {
-    "typo3/cms-core": "^10.4",
-    "ramsey/uuid": "^4.0"
+    "typo3/cms-core": "^10.4||^11.5",
+    "ramsey/uuid": "^4.0",
+    "dwenzel/t3extension-tools": "^1.7"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master",
-    "nimut/testing-framework": "^4.0 || ^5.0"
+    "roave/security-advisories": "dev-latest",
+    "nimut/testing-framework": "^4.0 || ^5.0 || ^5.2"
   },
   "extra": {
     "typo3/cms": {
@@ -25,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Fr\\ApiToken\\": "Classes"
+      "CPSIT\\ApiToken\\": "Classes"
     }
   }
 }

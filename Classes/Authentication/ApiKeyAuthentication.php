@@ -1,22 +1,22 @@
 <?php
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Authentication;
+namespace CPSIT\ApiToken\Authentication;
 
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
-use Fr\ApiToken\Configuration\RestApiInterface;
-use Fr\ApiToken\Domain\Repository\TokenRepository;
-use Fr\ApiToken\Domain\Repository\TokenRepositoryInterface;
-use Fr\ApiToken\Exception\InvalidHttpMethodException;
-use Fr\ApiToken\Service\TokenService;
-use Fr\ApiToken\Service\TokenServiceInterface;
-use Fr\ApiToken\Traits\TokenRepositoryTrait;
+use CPSIT\ApiToken\Configuration\RestApiInterface;
+use CPSIT\ApiToken\Domain\Repository\TokenRepository;
+use CPSIT\ApiToken\Domain\Repository\TokenRepositoryInterface;
+use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Service\TokenService;
+use CPSIT\ApiToken\Service\TokenServiceInterface;
+use CPSIT\ApiToken\Traits\TokenRepositoryTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApiKeyAuthentication implements HeaderAwareInterface

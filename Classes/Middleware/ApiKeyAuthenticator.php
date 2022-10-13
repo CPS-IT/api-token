@@ -1,16 +1,16 @@
 <?php
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Middleware;
+namespace CPSIT\ApiToken\Middleware;
 
-use Fr\ApiToken\Authentication\ApiKeyAuthentication;
-use Fr\ApiToken\Context\AuthenticatedAspect;
-use Fr\ApiToken\Exception\InvalidHttpMethodException;
-use Fr\ApiToken\Request\Validation\ResolvedRouteValidator;
+use CPSIT\ApiToken\Authentication\ApiKeyAuthentication;
+use CPSIT\ApiToken\Context\AuthenticatedAspect;
+use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Request\Validation\ResolvedRouteValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -50,8 +50,6 @@ class ApiKeyAuthenticator implements MiddlewareInterface
     }
 
     /**
-     * todo IMPORTANT, if $this->routeValidator->validate($request) fails (because request not having routing) DOOR IS OPEN!
-     *
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
@@ -59,6 +57,10 @@ class ApiKeyAuthenticator implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /**
+         * Fixme We should probably remove the routeValidator and let
+         * this class be responsible for the api key validation only
+         */
         if ($this->routeValidator->validate($request)) {
             $this->setApiAuthenticatedAspect($request);
         }

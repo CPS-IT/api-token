@@ -1,13 +1,13 @@
 <?php
 /**
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Request\Validation;
+namespace CPSIT\ApiToken\Request\Validation;
 
-use Fr\ApiToken\Http\ResponseFactory;
+use CPSIT\ApiToken\Http\ResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
@@ -16,8 +16,8 @@ use TYPO3\CMS\Core\Http\JsonResponse;
  *
  * Then use these lines in your API handler to verify token:
  *
- * if(\Fr\ApiToken\Request\Validation\ApiTokenAuthenticator::isNotAuthenticated($request)){
-        return \Fr\ApiToken\Request\Validation\ApiTokenAuthenticator::returnErrorResponse();
+ * if(\CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator::isNotAuthenticated($request)){
+        return \CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator::returnErrorResponse();
     }
  *
  * Call X-API-IDENTIFIER = {your identifier} and application-authorization = {generated secret from above}

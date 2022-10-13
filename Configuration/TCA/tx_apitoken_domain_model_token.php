@@ -1,11 +1,11 @@
 <?php
 defined('TYPO3_MODE') or die();
 
-$tableName = \Fr\ApiToken\Domain\Model\Token::TABLE_NAME;
+$tableName = \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME;
 
 return [
     'ctrl' => [
-        'title' => \Fr\ApiToken\Configuration\Localization::forTable($tableName),
+        'title' => \CPSIT\ApiToken\Configuration\Localization::forTable($tableName),
         'label' => 'name',
         'sortby' => 'sorting',
         'tstamp' => 'tstamp',
@@ -27,7 +27,7 @@ return [
     'columns' => [
         'hidden' => [
             'exclude' => true,
-            'label' => \Fr\ApiToken\Configuration\Localization::forCoreTranslation('visible'),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forCoreTranslation('visible'),
             'config' => [
                 'type' => 'check',
                 'renderType' => 'checkboxToggle',
@@ -45,7 +45,7 @@ return [
          * Custom fields
          */
         'name' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('name', $tableName),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forField('name', $tableName),
             'exclude' => 1,
             'config' => [
                 'type' => 'input',
@@ -54,7 +54,7 @@ return [
             ],
         ],
         'hash' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('hash', $tableName),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forField('hash', $tableName),
             'exclude' => 1,
             'config' => [
                 'type' => 'input',
@@ -62,7 +62,7 @@ return [
             ],
         ],
         'identifier' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('identifier', $tableName),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forField('identifier', $tableName),
             'exclude' => 1,
             'config' => [
                 'type' => 'input',
@@ -70,7 +70,7 @@ return [
             ],
         ],
         'valid_until' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('valid_until', $tableName),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forField('valid_until', $tableName),
             'exclude' => 1,
             'config' => [
                 'type' => 'input',
@@ -81,7 +81,7 @@ return [
             ]
         ],
         'description' => [
-            'label' => \Fr\ApiToken\Configuration\Localization::forField('description', $tableName),
+            'label' => \CPSIT\ApiToken\Configuration\Localization::forField('description', $tableName),
             'exclude' => 1,
             'config' => [
                 'type' => 'text',
@@ -94,12 +94,12 @@ return [
     'types' => [
         '0' => [
             'showitem' => '
-                --div--;' . \Fr\ApiToken\Configuration\Localization::forTab('general', true) . ',
+                --div--;' . \CPSIT\ApiToken\Configuration\Localization::forTab('general', true) . ',
                     name,
                     identifier,
                     valid_until,
                     description,
-                --div--;' . \Fr\ApiToken\Configuration\Localization::forTab('access', true) . ',
+                --div--;' . \CPSIT\ApiToken\Configuration\Localization::forTab('access', true) . ',
                     hidden,
                     --palette--;;access,
             ',
