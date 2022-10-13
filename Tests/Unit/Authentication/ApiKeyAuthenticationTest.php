@@ -27,8 +27,13 @@ use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
+use Doctrine\DBAL\Result;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Config\ResourceCheckerInterface;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\QueryRestrictionContainerInterface;
+use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 /**
  * Class ApiKeyAuthenticationTest
@@ -50,15 +55,31 @@ class ApiKeyAuthenticationTest extends UnitTestCase
      */
     protected $tokenService;
 
+    protected PersistenceManagerInterface $persistenceManager;
+    protected QueryBuilder $queryBuilder;
+    protected QueryRestrictionContainerInterface $restrictionContainer;
+    protected Result $result;
+
     /**
      * @throws \ReflectionException
      */
     public function setUp(): void
     {
+        $this->result = $this->getMockForAbstractClass(Result::class);
+        $this->restrictionContainer = $this->getMockForAbstractClass(QueryRestrictionContainerInterface::class);
+        $this->persistenceManager = $this->getMockForAbstractClass(PersistenceManagerInterface::class);
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getRestrictions', 'select', 'from', 'where', 'expr', 'execute', 'createNamedParameter'])
+            ->getMock();
+        $this->queryBuilder->method('getRestrictions')->willReturn($this->restrictionContainer);
+        $this->queryBuilder->method('execute')->willReturn($this->result);
+        $this->restrictionContainer->method('removeAll')->willReturn($this->restrictionContainer);
         $this->tokenService = $this->getMockForAbstractClass(TokenServiceInterface::class);
         $this->tokenRepository = $this->getMockBuilder(TokenRepository::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByIdentifier'])
+            ->setConstructorArgs([$this->persistenceManager, $this->queryBuilder])
+            ->onlyMethods(['findOneRecordByIdentifier', 'findAllRecords'])
+            ->addMethods(['findOneByIdentifier'])
             ->getMock();
         $this->subject = new ApiKeyAuthentication($this->tokenService, $this->tokenRepository);
     }
@@ -133,8 +154,8 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         $emptyResultFromRepository = [];
 
         $this->tokenRepository->expects($this->once())
-            ->method('findOneByIdentifier')
-            ->with([$identifier])
+            ->method('findOneRecordByIdentifier')
+            ->with($identifier)
             ->willReturn($emptyResultFromRepository);
 
         $this->subject->withIdentifier($identifier);
@@ -177,14 +198,14 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         ];
 
         $this->tokenRepository->expects($this->once())
-            ->method('findOneByIdentifier')
-            ->with([$identifier])
+            ->method('findOneRecordByIdentifier')
+            ->with($identifier)
             ->willReturn($validRecord);
         $this->subject->withIdentifier($identifier);
 
         $this->tokenService->expects($this->once())
-            ->method('checK')
-            ->with([$validSecret, $hashOfSecret])
+            ->method('check')
+            ->with($validSecret, $hashOfSecret)
             ->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);
