@@ -6,11 +6,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Domain\Repository;
 
 use DateTime;
 use CPSIT\ApiToken\Domain\Model\Token;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -25,10 +25,10 @@ class TokenRepository implements TokenRepositoryInterface
      */
     protected ?PersistenceManagerInterface $persistenceManager;
 
-    public function __construct(PersistenceManagerInterface $persistenceManager, QueryBuilder $queryBuilder = null)
+    public function __construct(PersistenceManagerInterface $persistenceManager, QueryBuilder $queryBuilder)
     {
         $this->persistenceManager = $persistenceManager;
-        $this->queryBuilder = $queryBuilder ?? GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $this->queryBuilder = $queryBuilder;
         $this->queryBuilder
             ->getRestrictions()
             ->removeAll()
@@ -47,14 +47,14 @@ class TokenRepository implements TokenRepositoryInterface
                 $this->queryBuilder->expr()->eq(self::IDENTIFIER_COLUMN, $this->queryBuilder->createNamedParameter($identifier))
             )->execute()->fetchAssociative();
 
-        return $result ? :[];
+        return $result ?: [];
     }
 
     public function findAllRecords(): array
     {
         $records = [];
         $result = $this->queryBuilder
-            ->select('crdate','valid_until','uid','name','identifier','description', 'hidden')
+            ->select('crdate', 'valid_until', 'uid', 'name', 'identifier', 'description', 'hidden')
             ->from(self::TABLE_NAME)
             ->execute();
 
@@ -64,7 +64,7 @@ class TokenRepository implements TokenRepositoryInterface
         }
 
         return array_map(
-            static function ($tokenRecord)  {
+            static function ($tokenRecord) {
                 $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new DateTime('now'))->getTimestamp());
                 $tokenRecord['is_hidden'] = $tokenRecord['hidden'] === 1;
                 return $tokenRecord;
@@ -78,9 +78,7 @@ class TokenRepository implements TokenRepositoryInterface
      */
     public function persistNewToken(Token $token): void
     {
-       $this->persistenceManager->add($token);
-       $this->persistenceManager->persistAll();
+        $this->persistenceManager->add($token);
+        $this->persistenceManager->persistAll();
     }
-
-
 }
