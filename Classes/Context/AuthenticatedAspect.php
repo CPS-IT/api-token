@@ -5,10 +5,10 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Context;
+namespace CPSIT\ApiToken\Context;
 
 use DateTimeImmutable;
-use Fr\ApiToken\Authentication\AuthenticationInterface;
+use CPSIT\ApiToken\Authentication\AuthenticationInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 

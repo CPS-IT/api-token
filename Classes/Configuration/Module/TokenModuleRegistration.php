@@ -5,11 +5,11 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Configuration\Module;
+namespace CPSIT\ApiToken\Configuration\Module;
 
 use DWenzel\T3extensionTools\Configuration\ModuleRegistrationInterface;
 use DWenzel\T3extensionTools\Configuration\ModuleRegistrationTrait;
-use Fr\ApiToken\Configuration\Extension;
+use CPSIT\ApiToken\Configuration\Extension;
 
 class TokenModuleRegistration implements ModuleRegistrationInterface
 {
@@ -21,7 +21,7 @@ class TokenModuleRegistration implements ModuleRegistrationInterface
     static protected string $mainModuleName = 'system';
     static protected string $vendorExtensionName = Extension::VENDOR_NAME . '.' . Extension::NAME;
     static protected array $controllerActions = [
-        \Fr\ApiToken\Controller\Backend\TokenController::class => 'list,new,create,delete'
+        \CPSIT\ApiToken\Controller\Backend\TokenController::class => 'list,new,create,delete'
     ];
 
     static protected string $position = 'bottom';

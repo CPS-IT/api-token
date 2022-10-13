@@ -1,5 +1,5 @@
 <?php
 defined('TYPO3_MODE') or die();
 
-\Fr\ApiToken\Configuration\Extension::configurePlugins();
-\Fr\ApiToken\Configuration\Extension::registerIcons();
+\CPSIT\ApiToken\Configuration\Extension::configurePlugins();
+\CPSIT\ApiToken\Configuration\Extension::registerIcons();

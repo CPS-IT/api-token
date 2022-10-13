@@ -6,7 +6,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Http;
+namespace CPSIT\ApiToken\Http;
 
 use TYPO3\CMS\Core\Http\JsonResponse;
 

@@ -5,12 +5,12 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Command;
+namespace CPSIT\ApiToken\Command;
 
-use Fr\ApiToken\Domain\Repository\TokenRepository;
-use Fr\ApiToken\Service\TokenBuildService;
-use Fr\ApiToken\Service\TokenService;
-use Fr\ApiToken\Service\TokenServiceInterface;
+use CPSIT\ApiToken\Domain\Repository\TokenRepository;
+use CPSIT\ApiToken\Service\TokenBuildService;
+use CPSIT\ApiToken\Service\TokenService;
+use CPSIT\ApiToken\Service\TokenServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

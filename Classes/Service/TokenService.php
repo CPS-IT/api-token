@@ -6,11 +6,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Service;
+namespace CPSIT\ApiToken\Service;
 
 use Exception;
-use Fr\ApiToken\Crypto\Random;
-use Fr\ApiToken\Crypto\RandomInterface;
+use CPSIT\ApiToken\Crypto\Random;
+use CPSIT\ApiToken\Crypto\RandomInterface;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashInterface;

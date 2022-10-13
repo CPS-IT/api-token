@@ -5,12 +5,12 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Middleware;
+namespace CPSIT\ApiToken\Middleware;
 
-use Fr\ApiToken\Authentication\ApiKeyAuthentication;
-use Fr\ApiToken\Context\AuthenticatedAspect;
-use Fr\ApiToken\Exception\InvalidHttpMethodException;
-use Fr\ApiToken\Request\Validation\ResolvedRouteValidator;
+use CPSIT\ApiToken\Authentication\ApiKeyAuthentication;
+use CPSIT\ApiToken\Context\AuthenticatedAspect;
+use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Request\Validation\ResolvedRouteValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Fr\ApiToken\Tests\Unit\Authentication;
+namespace CPSIT\ApiToken\Tests\Unit\Authentication;
 
 /***************************************************************
  *  Copyright notice
@@ -21,12 +21,12 @@ namespace Fr\ApiToken\Tests\Unit\Authentication;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use Fr\ApiToken\Authentication\ApiKeyAuthentication;
-use Fr\ApiToken\Authentication\HeaderAwareInterface;
-use Fr\ApiToken\Configuration\RestApiInterface;
-use Fr\ApiToken\Domain\Repository\TokenRepository;
-use Fr\ApiToken\Exception\InvalidHttpMethodException;
-use Fr\ApiToken\Service\TokenServiceInterface;
+use CPSIT\ApiToken\Authentication\ApiKeyAuthentication;
+use CPSIT\ApiToken\Authentication\HeaderAwareInterface;
+use CPSIT\ApiToken\Configuration\RestApiInterface;
+use CPSIT\ApiToken\Domain\Repository\TokenRepository;
+use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Service\TokenServiceInterface;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 

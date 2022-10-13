@@ -5,7 +5,7 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Authentication;
+namespace CPSIT\ApiToken\Authentication;
 
 /*
  * Describes authentications based on request headers
