@@ -4,6 +4,14 @@ services:
     autoconfigure: true
     public: false
 
+  queryBuilder.token:
+    class: 'TYPO3\CMS\Core\Database\Query\QueryBuilder'
+    factory:
+      - '@TYPO3\CMS\Core\Database\ConnectionPool'
+      - 'getQueryBuilderForTable'
+    arguments:
+      - 'tx_apitoken_domain_model_token'
+
   CPSIT\ApiToken\:
     resource: '../Classes/*'
 
@@ -17,8 +25,11 @@ services:
     public: true
 
   CPSIT\ApiToken\Domain\Repository\TokenRepository:
+    autowire: false
     public: true
-
+    arguments:
+      $persistenceManager: '@TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface'
+      $queryBuilder: '@queryBuilder.token'
   CPSIT\ApiToken\Command\GenerateTokenCommand:
     tags:
       - name: 'console.command'
@@ -26,3 +37,4 @@ services:
         description: 'Generate api token for authentication.'
         # not required, defaults to false
         hidden: false
+
