@@ -1,3 +1,6 @@
+2022-10-13         [RELEASE] Release of api_token 0.9.1 (Dirk Wenzel)
+2022-10-13 5855f89 [BUGFIX] fixed error with DI in TokenRepository (Dirk Wenzel)
+
 2022-10-13         [RELEASE] Release of api_token 0.9.0 (Dirk Wenzel)
 2022-10-13 3dabf9f [TASK] failing unit tests for ApiKeyAuthentication fixed (Dirk Wenzel)
 2022-10-13 e536925 [WIP] some failing unit tests fixed (Dirk Wenzel)
