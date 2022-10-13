@@ -4,22 +4,22 @@ services:
     autoconfigure: true
     public: false
 
-  Fr\ApiToken\:
+  CPSIT\ApiToken\:
     resource: '../Classes/*'
 
-  Fr\ApiToken\Middleware\ApiKeyAuthenticator:
+  CPSIT\ApiToken\Middleware\ApiKeyAuthenticator:
     public: true
 
-  Fr\Controller\Backend\TokenController:
+  CPSIT\Controller\Backend\TokenController:
     public: true
 
-  Fr\ApiToken\Service\TokenBuildService:
+  CPSIT\ApiToken\Service\TokenBuildService:
     public: true
 
-  Fr\ApiToken\Domain\Repository\TokenRepository:
+  CPSIT\ApiToken\Domain\Repository\TokenRepository:
     public: true
 
-  Fr\ApiToken\Command\GenerateTokenCommand:
+  CPSIT\ApiToken\Command\GenerateTokenCommand:
     tags:
       - name: 'console.command'
         command: 'apitoken:generate'

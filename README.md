@@ -1,4 +1,4 @@
-# Fr/ApiToken
+# API Token
 
 ## Generates API credentials
 ### Generate by CLI command
@@ -28,12 +28,12 @@ tbd
 
 ## Use in your extension
 
-1. Require extension: `composer req fr/api-token`
+1. Require extension: `composer req cpsit/api-token`
 2. Implement Token check in your API Handler 
 
 ```
-if(\Fr\ApiToken\Request\Validation\ApiTokenAuthenticator::isNotAuthenticated($request)){
-  return \Fr\ApiToken\Request\Validation\ApiTokenAuthenticator::returnErrorResponse();
+if(\CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator::isNotAuthenticated($request)){
+  return \CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator::returnErrorResponse();
 }
 ```
 3. Put into API request header 

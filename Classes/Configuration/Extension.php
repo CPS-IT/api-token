@@ -6,10 +6,10 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Configuration;
+namespace CPSIT\ApiToken\Configuration;
 
 use DWenzel\T3extensionTools\Configuration\ExtensionConfiguration;
-use Fr\ApiToken\Configuration\Module\TokenModuleRegistration;
+use CPSIT\ApiToken\Configuration\Module\TokenModuleRegistration;
 
 final class Extension extends ExtensionConfiguration
 {
@@ -28,13 +28,13 @@ final class Extension extends ExtensionConfiguration
 
     public const KEY = 'api_token';
     public const NAME = 'ApiToken';
-    public const VENDOR_NAME = 'Fr';
+    public const VENDOR_NAME = 'CPSIT';
     public const EXTENSION_KEY = self::KEY;
 
     /**
      * SVG icons to register
      */
-    public const TOKEN_SVG = \Fr\ApiToken\Domain\Model\Token::TABLE_NAME;
+    public const TOKEN_SVG = \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME;
     protected const SVG_ICONS_TO_REGISTER = [
         self::TOKEN_SVG => 'EXT:' . self::KEY . '/Resources/Public/Icons/tx_apitoken_domain_model_token.svg',
     ];

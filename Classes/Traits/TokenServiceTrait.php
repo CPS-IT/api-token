@@ -6,9 +6,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Traits;
+namespace CPSIT\ApiToken\Traits;
 
-use Fr\ApiToken\Service\TokenServiceInterface;
+use CPSIT\ApiToken\Service\TokenServiceInterface;
 
 /**
  * Provides a TokenService

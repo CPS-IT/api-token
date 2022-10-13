@@ -1,5 +1,5 @@
 {
-  "name": "fr/api-token",
+  "name": "cpsit/api-token",
   "description": "Generate and validate token auth for api requests.",
   "homepage": "https://github.com/CPS-IT/api-token",
   "license": "GPL-2.0-or-later",
@@ -20,7 +20,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Fr\\ApiToken\\": "Classes"
+      "CPSIT\\ApiToken\\": "Classes"
     }
   }
 }

@@ -9,8 +9,8 @@ defined('TYPO3_MODE') or die();
 
 return [
     'frontend' => [
-        'fr/api-token/api-key-authenticator' => [
-            'target' => \Fr\ApiToken\Middleware\ApiKeyAuthenticator::class,
+        'cpsit/api-token/api-key-authenticator' => [
+            'target' => \CPSIT\ApiToken\Middleware\ApiKeyAuthenticator::class,
             'after' => [
                 'typo3/cms-frontend/page-resolver',
             ],

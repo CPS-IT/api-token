@@ -5,9 +5,9 @@
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace Fr\ApiToken\Request\Validation;
+namespace CPSIT\ApiToken\Request\Validation;
 
-use Fr\ApiToken\Context\AuthenticatedAspect;
+use CPSIT\ApiToken\Context\AuthenticatedAspect;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
