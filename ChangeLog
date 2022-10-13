@@ -1,3 +1,8 @@
+2022-10-13         [RELEASE] Release of api_token 0.9.0 (Dirk Wenzel)
+2022-10-13 3dabf9f [TASK] failing unit tests for ApiKeyAuthentication fixed (Dirk Wenzel)
+2022-10-13 e536925 [WIP] some failing unit tests fixed (Dirk Wenzel)
+2022-10-13 aaa4607 [WIP] inject QueryBuilder dependency in TokenRepository constructor - unit tests adapted (might be easier to switch to functional tests) (Dirk Wenzel)
+
 2022-10-13         [RELEASE] Release of api_token 0.8.0 (Dirk Wenzel)
 2022-10-13 c94ff37 [TASK] vendor name changed to CPSIT composer package name to cpsit/api-token (Dirk Wenzel)
 2022-08-12 66e1029 [TASK] dependencies updated -  allow typo3/cms-core:^11.5 - allow nimut/testing-framework ^5.3 (Dirk Wenzel)
