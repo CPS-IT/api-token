@@ -1,3 +1,11 @@
+2022-10-13         [RELEASE] Release of api_token 0.8.0 (Dirk Wenzel)
+2022-10-13 c94ff37 [TASK] vendor name changed to CPSIT composer package name to cpsit/api-token (Dirk Wenzel)
+2022-08-12 66e1029 [TASK] dependencies updated -  allow typo3/cms-core:^11.5 - allow nimut/testing-framework ^5.3 (Dirk Wenzel)
+2022-06-08 1b4ff92 code cleanup (Dirk Wenzel)
+2022-05-17 d32242e [TASK] composer.json updated (Dirk Wenzel)
+2022-05-17 8782c81 [BUGFIX] invalid dependency fixed (Dirk Wenzel)
+2022-05-12 0e23535 [TASK] dependencies updated - missing package dwenzel/t3extension-tools added (Dirk Wenzel)
+
 2022-01-14         [RELEASE] Release of api_token 0.7.0 (Arend Maubach)
 2022-01-14 bee6bfe fixing DI (Arend Maubach)
 2022-01-14 7a77449 refactoring, cleaning up (Arend Maubach)
@@ -6,5 +14,3 @@
 2022-01-12 0779fdb [WIP] Token auth (Arend Maubach)
 2022-01-11 cf3c742 [WIP] validating middleware (Arend Maubach)
 2022-01-11 194f371 [WIP] write token by command controller (Arend Maubach)
-
-
