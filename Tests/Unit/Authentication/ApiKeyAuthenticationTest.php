@@ -198,14 +198,14 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         ];
 
         $this->tokenRepository->expects($this->once())
-            ->method('findOneByIdentifier')
-            ->with([$identifier])
+            ->method('findOneRecordByIdentifier')
+            ->with($identifier)
             ->willReturn($validRecord);
         $this->subject->withIdentifier($identifier);
 
         $this->tokenService->expects($this->once())
-            ->method('checK')
-            ->with([$validSecret, $hashOfSecret])
+            ->method('check')
+            ->with($validSecret, $hashOfSecret)
             ->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);
