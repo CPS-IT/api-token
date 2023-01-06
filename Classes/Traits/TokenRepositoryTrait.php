@@ -44,5 +44,4 @@ trait TokenRepositoryTrait
         }
         return $this->repository;
     }
-
 }

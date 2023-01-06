@@ -18,21 +18,14 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 class TokenRepository implements TokenRepositoryInterface
 {
-    private QueryBuilder $queryBuilder;
-
     /**
      * @var ?PersistenceManagerInterface
      */
     protected ?PersistenceManagerInterface $persistenceManager;
 
-    public function __construct(PersistenceManagerInterface $persistenceManager, QueryBuilder $queryBuilder = null)
+    public function __construct(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
-        $this->queryBuilder = $queryBuilder ?? GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
-        $this->queryBuilder
-            ->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
     }
 
     /**
@@ -40,21 +33,26 @@ class TokenRepository implements TokenRepositoryInterface
      */
     public function findOneRecordByIdentifier(string $identifier): array
     {
-        $result = $this->queryBuilder
-            ->select('*')
+        $queryBuilder = $this->getQueryBuilder();
+        $result = $queryBuilder->select('*')
             ->from(self::TABLE_NAME)
             ->where(
-                $this->queryBuilder->expr()->eq(self::IDENTIFIER_COLUMN, $this->queryBuilder->createNamedParameter($identifier))
-            )->execute()->fetchAssociative();
+                $queryBuilder->expr()->eq(
+                    self::IDENTIFIER_COLUMN,
+                    $queryBuilder->createNamedParameter($identifier)
+                )
+            )
+            ->execute()
+            ->fetchAssociative();
 
-        return $result ? :[];
+        return $result ?: [];
     }
 
     public function findAllRecords(): array
     {
         $records = [];
-        $result = $this->queryBuilder
-            ->select('crdate','valid_until','uid','name','identifier','description', 'hidden')
+        $result = $this->getQueryBuilder()
+            ->select('crdate', 'valid_until', 'uid', 'name', 'identifier', 'description', 'hidden')
             ->from(self::TABLE_NAME)
             ->execute();
 
@@ -64,7 +62,7 @@ class TokenRepository implements TokenRepositoryInterface
         }
 
         return array_map(
-            static function ($tokenRecord)  {
+            static function ($tokenRecord) {
                 $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new DateTime('now'))->getTimestamp());
                 $tokenRecord['is_hidden'] = $tokenRecord['hidden'] === 1;
                 return $tokenRecord;
@@ -78,9 +76,19 @@ class TokenRepository implements TokenRepositoryInterface
      */
     public function persistNewToken(Token $token): void
     {
-       $this->persistenceManager->add($token);
-       $this->persistenceManager->persistAll();
+        $this->persistenceManager->add($token);
+        $this->persistenceManager->persistAll();
     }
 
+    protected function getQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable(self::TABLE_NAME);
+        $queryBuilder
+            ->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
+        return $queryBuilder;
+    }
 }
