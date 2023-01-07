@@ -272,7 +272,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
             'valid_until' => $expiredDate->format('U')
         ];
 
-        $this->tokenRepository->method('findOneByIdentifier')
+        $this->tokenRepository->method('findOneRecordByIdentifier')
             ->willReturn($expiredToken);
         $this->subject->withIdentifier($identifier);
 
