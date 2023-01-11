@@ -1,3 +1,9 @@
+2023-01-11         [RELEASE] Release of api_token 0.9.2 (Vladimir Falcon)
+2023-01-11 13b43c9 Support nimut/testing-framework 6.0 (Vladimir Falcon)
+2023-01-09 a91c9a5 Code refactoring initialize middleware after typo3/cms-frontend/page-argument-validator (Vladimir Falcon)
+2023-01-07 2d50400 Fixed moked repository method name (Vladimir Falcon)
+2023-01-07 2207125 Fixed extbase error plugin can not be determined (Vladimir Falcon)
+
 2022-10-13         [RELEASE] Release of api_token 0.9.1 (Dirk Wenzel)
 2022-10-13 5855f89 [BUGFIX] fixed error with DI in TokenRepository (Dirk Wenzel)
 
