@@ -12,7 +12,7 @@ return [
         'cpsit/api-token/api-key-authenticator' => [
             'target' => \CPSIT\ApiToken\Middleware\ApiKeyAuthenticator::class,
             'after' => [
-                'typo3/cms-frontend/page-resolver',
+                'typo3/cms-frontend/page-argument-validator',
             ],
         ],
     ],
