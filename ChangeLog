@@ -1,3 +1,6 @@
+2023-06-12         [RELEASE] Release of api_token 0.9.4 (Vladimir Falcon)
+2023-06-12 9fb8d66 Add missing HTTP methods (Vladimir Falcon)
+
 2023-01-12         [RELEASE] Release of api_token 0.9.3 (Vladimir Falcon)
 2023-01-12 c74c31f Update Unit tests (Vladimir Falcon)
 2023-01-12 83aeddf Update dwenzel/t3extension-tools requirements (Vladimir Falcon)
