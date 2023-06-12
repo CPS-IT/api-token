@@ -20,6 +20,10 @@ interface RestApiInterface
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_UPDATE = 'UPDATE';
+    public const METHOD_HEAD = 'HEAD';
+    public const METHOD_OPTIONS = 'OPTIONS';
+    public const METHOD_TRACE = 'TRACE';
+    public const METHOD_CONNECT = 'CONNECT';
 
     /**
      * Valid methods
@@ -31,6 +35,10 @@ interface RestApiInterface
         RestApiInterface::METHOD_POST,
         RestApiInterface::METHOD_PUT,
         RestApiInterface::METHOD_UPDATE,
+        RestApiInterface::METHOD_HEAD,
+        RestApiInterface::METHOD_OPTIONS,
+        RestApiInterface::METHOD_TRACE,
+        RestApiInterface::METHOD_CONNECT,
     ];
 
     public const HEADER_NAME_IDENTIFIER = 'X-API-IDENTIFIER';
