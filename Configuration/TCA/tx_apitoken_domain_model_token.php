@@ -21,9 +21,7 @@ return [
         ],
         'searchFields' => 'name,identifier,description',
     ],
-    'interface' => [
-        'showRecordFieldList' => 'name,identifier,valid_until,description',
-    ],
+    'interface' => [],
     'columns' => [
         'hidden' => [
             'exclude' => true,
