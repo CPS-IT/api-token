@@ -1,23 +1,14 @@
 <?php
 declare(strict_types=1);
-namespace CPSIT\ApiToken\Tests\Unit\Authentication;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * This file is part of the iki Extension for TYPO3 CMS.
  *
- *  (c) 2020 Dirk Wenzel
- *  All rights reserved
- *
- * The GNU General Public License can be found at
- * http://www.gnu.org/copyleft/gpl.html.
- * A copy is found in the text file GPL.txt and important notices to the license
- * from the author is found in LICENSE.txt distributed with these scripts.
- * This script is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * For the full copyright and license information, please read the
+ * README.md file that was distributed with this source code.
+ */
+
+namespace CPSIT\ApiToken\Tests\Unit\Authentication;
 
 use DateTimeImmutable;
 use DateTimeZone;
@@ -26,12 +17,9 @@ use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
-/**
- * Class ApiKeyAuthenticationTest
- */
 class ApiKeyAuthenticationTest extends UnitTestCase
 {
     /**
@@ -49,83 +37,72 @@ class ApiKeyAuthenticationTest extends UnitTestCase
      */
     protected $tokenService;
 
-    /**
-     * @throws \ReflectionException
-     */
     public function setUp(): void
     {
         $this->tokenService = $this->getMockForAbstractClass(TokenServiceInterface::class);
         $this->tokenRepository = $this->getMockBuilder(TokenRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['findOneRecordByIdentifier'])
+            ->onlyMethods(
+                [
+                'findOneRecordByIdentifier'
+                ]
+            )
             ->getMock();
         $this->subject = new ApiKeyAuthentication($this->tokenService, $this->tokenRepository);
     }
 
-    public function testIsAuthenticatedInitiallyReturnsFalse()
+    public function testIsAuthenticatedInitiallyReturnsFalse(): void
     {
-        $this->assertFalse(
-            $this->subject->isAuthenticated()
-        );
+        $this->assertFalse($this->subject->isAuthenticated());
     }
 
-    public function testValidateHeaderNameReturnsFalseForInvalidName()
+    public function testValidateHeaderNameReturnsFalseForInvalidName(): void
     {
         $name = 'invalidFooName';
-        $this->assertFalse(
-            $this->subject->validateHeaderName($name)
-        );
+        $this->assertFalse($this->subject->validateHeaderName($name));
     }
 
-    public function testValidateHeaderNameReturnsTrueForValidName()
+    public function testValidateHeaderNameReturnsTrueForValidName(): void
     {
-        $this->assertTrue(
-            $this->subject->validateHeaderName(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION)
-        );
+        $this->assertTrue($this->subject->validateHeaderName(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION));
     }
 
-    public function testValidUntilInitiallyReturnsPastDateTime()
+    public function testValidUntilInitiallyReturnsPastDateTime(): void
     {
         $now = new DateTimeImmutable('now');
         $validUntil = $this->subject->validUntil();
 
-        $this->assertTrue(
-            $now > $validUntil
-        );
+        $this->assertTrue($now > $validUntil);
     }
 
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForInvalidName()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForInvalidName(): void
     {
         $invalidHeaderName = 'booFar';
         $value = 'no';
 
         $invalidAuthentication = $this->subject->fromHeader($invalidHeaderName, $value);
-        $this->assertFalse(
-            $invalidAuthentication->isAuthenticated()
-        );
+        $this->assertFalse($invalidAuthentication->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyValue()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyValue(): void
     {
         $invalidHeaderName = '';
         $secret = 'no';
 
         $invalidAuthentication = $this->subject->fromHeader($secret, $invalidHeaderName);
-        $this->assertFalse(
-            $invalidAuthentication->isAuthenticated()
-        );
+        $this->assertFalse($invalidAuthentication->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptResultFromRepository()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptResultFromRepository(): void
     {
         $secret = 'foo';
         $identifier = 'baz';
@@ -139,27 +116,23 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         $this->subject->withIdentifier($identifier);
 
         $invalidAuthentication = $this->subject->fromHeader($secret);
-        $this->assertFalse(
-            $invalidAuthentication->isAuthenticated()
-        );
+        $this->assertFalse($invalidAuthentication->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyIdentifier()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyIdentifier(): void
     {
         $secret = 'foo';
         $authentication = $this->subject->fromHeader($secret);
-        $this->assertFalse(
-            $authentication->isAuthenticated()
-        );
+        $this->assertFalse($authentication->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsAuthenticatedInstanceForValidHeader()
+    public function testFromHeaderReturnsAuthenticatedInstanceForValidHeader(): void
     {
         $validSecret = 'foo';
         $hashOfSecret = 'bar';
@@ -187,22 +160,14 @@ class ApiKeyAuthenticationTest extends UnitTestCase
             ->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);
-        $this->assertTrue(
-            $authentication->isAuthenticated()
-        );
+        $this->assertTrue($authentication->isAuthenticated());
 
-        $this->assertEquals(
-            $validUntil,
-            $authentication->validUntil()
-        );
+        $this->assertEquals($validUntil, $authentication->validUntil());
     }
 
-    public function testGetMethodInitiallyReturnsGet()
+    public function testGetMethodInitiallyReturnsGet(): void
     {
-        $this->assertSame(
-            RestApiInterface::METHOD_GET,
-            $this->subject->getMethod()
-        );
+        $this->assertSame(RestApiInterface::METHOD_GET, $this->subject->getMethod());
     }
 
     public function validMethodsDataProvider(): array
@@ -220,19 +185,16 @@ class ApiKeyAuthenticationTest extends UnitTestCase
      * @dataProvider validMethodsDataProvider
      * @throws InvalidHttpMethodException
      */
-    public function testWithMethodSetsValidMethods($method)
+    public function testWithMethodSetsValidMethods($method): void
     {
         $this->subject->withMethod($method);
-        $this->assertSame(
-            $method,
-            $this->subject->getMethod()
-        );
+        $this->assertSame($method, $this->subject->getMethod());
     }
 
     /**
      * @throws InvalidHttpMethodException
      */
-    public function testWithMethodThrowsExceptionForInvalidMethod()
+    public function testWithMethodThrowsExceptionForInvalidMethod(): void
     {
         $invalidMethod = 'foo';
         $this->expectException(InvalidHttpMethodException::class);
@@ -243,20 +205,18 @@ class ApiKeyAuthenticationTest extends UnitTestCase
     /**
      * @throws \Exception
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptySecret()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptySecret(): void
     {
         $secret = '';
         $result = $this->subject->fromHeader($secret);
-        $this->assertFalse(
-            $result->isAuthenticated()
-        );
+        $this->assertFalse($result->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      * @noinspection DuplicatedCode
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForExpiredValidUntil()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForExpiredValidUntil(): void
     {
         $validSecret = 'foo';
         $hashOfSecret = 'bar';
@@ -272,24 +232,21 @@ class ApiKeyAuthenticationTest extends UnitTestCase
             'valid_until' => $expiredDate->format('U')
         ];
 
-        $this->tokenRepository->method('findOneRecordByIdentifier')
-            ->willReturn($expiredToken);
+        $this->tokenRepository->method('findOneRecordByIdentifier')->willReturn($expiredToken);
         $this->subject->withIdentifier($identifier);
 
         $this->tokenService->method('check')->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);
 
-        $this->assertFalse(
-            $authentication->isAuthenticated()
-        );
+        $this->assertFalse($authentication->isAuthenticated());
     }
 
     /**
      * @throws \Exception
      * @noinspection DuplicatedCode
      */
-    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyHash()
+    public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyHash(): void
     {
         $validSecret = 'foo';
         $emptyHashOfSecret = '';
@@ -305,16 +262,13 @@ class ApiKeyAuthenticationTest extends UnitTestCase
             'valid_until' => $validDate->format('U')
         ];
 
-        $this->tokenRepository->method('findOneRecordByIdentifier')
-            ->willReturn($expiredToken);
+        $this->tokenRepository->method('findOneRecordByIdentifier')->willReturn($expiredToken);
         $this->subject->withIdentifier($identifier);
 
         $this->tokenService->method('check')->willReturn(true);
 
         $authentication = $this->subject->fromHeader($validSecret);
 
-        $this->assertFalse(
-            $authentication->isAuthenticated()
-        );
+        $this->assertFalse($authentication->isAuthenticated());
     }
 }
