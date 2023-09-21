@@ -1,6 +1,8 @@
 <?php
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+declare(strict_types=1);
+
+/*
+ * This file is part of the iki Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
@@ -9,8 +11,7 @@
 namespace CPSIT\ApiToken\Tests\Unit\Authentication;
 
 use CPSIT\ApiToken\Service\TokenBuildService;
-use CPSIT\IkiProjectImport\Domain\Model\Job;
-use Nimut\TestingFramework\TestCase\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 class TokenBuildServiceTest extends UnitTestCase
 {
@@ -21,5 +22,4 @@ class TokenBuildServiceTest extends UnitTestCase
         parent::setUp();
         $this->subject = new TokenBuildService();
     }
-
 }
