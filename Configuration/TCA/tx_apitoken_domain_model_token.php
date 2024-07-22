@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') or die();
+defined('TYPO3') or die();
 
 $tableName = \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME;
 
@@ -10,7 +10,6 @@ return [
         'sortby' => 'sorting',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'delete' => 'deleted',
         'enablecolumns' => [
             'disabled' => 'hidden',
@@ -21,7 +20,6 @@ return [
         ],
         'searchFields' => 'name,identifier,description',
     ],
-    'interface' => [],
     'columns' => [
         'hidden' => [
             'exclude' => true,
@@ -31,8 +29,7 @@ return [
                 'renderType' => 'checkboxToggle',
                 'items' => [
                     [
-                        0 => '',
-                        1 => '',
+                        'label' => '',
                         'invertStateDisplay' => true,
                     ],
                 ],
@@ -48,7 +45,8 @@ return [
             'config' => [
                 'type' => 'input',
                 'max' => 255,
-                'eval' => 'trim,required',
+                'eval' => 'trim',
+                'required' => true,
             ],
         ],
         'hash' => [
@@ -71,9 +69,7 @@ return [
             'label' => \CPSIT\ApiToken\Configuration\Localization::forField('valid_until', $tableName),
             'exclude' => 1,
             'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime,int',
+                'type' => 'datetime',
                 'default' => 0,
                 'readOnly' => false
             ]

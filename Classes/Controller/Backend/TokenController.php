@@ -44,7 +44,7 @@ class TokenController extends ActionController
     /**
      * Displays list of tokens
      */
-    public function listAction(): void
+    public function listAction(): \Psr\Http\Message\ResponseInterface
     {
         $records = $this->repository->findAllRecords();
 
@@ -56,6 +56,7 @@ class TokenController extends ActionController
                 'tableName' => \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME,
             ]
         );
+        return $this->htmlResponse();
     }
 
     /**
@@ -64,7 +65,7 @@ class TokenController extends ActionController
      * @param Token|null $newToken
      * @throws \Exception
      */
-    public function newAction(Token $newToken = null): void
+    public function newAction(Token $newToken = null): \Psr\Http\Message\ResponseInterface
     {
         $newToken = $newToken ?? new Token();
         $secret = $this->tokenService->generateSecret();
@@ -72,9 +73,9 @@ class TokenController extends ActionController
         $identifier = $this->tokenService->generateIdentifier();
 
         $this->addFlashMessage(
-            LocalizationUtility::translate('message.saveIdentifierAndSecretNow', Extension::KEY),
-            LocalizationUtility::translate('header.saveIdentifierAndSecret', Extension::KEY),
-            FlashMessage::INFO
+            LocalizationUtility::translate('message.saveIdentifierAndSecretNow', Extension::NAME),
+            LocalizationUtility::translate('header.saveIdentifierAndSecret', Extension::NAME),
+            \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO
         );
 
         $this->view->assignMultiple(
@@ -85,6 +86,7 @@ class TokenController extends ActionController
                 'newToken' => $newToken
             ]
         );
+        return $this->htmlResponse();
     }
 
     /**
