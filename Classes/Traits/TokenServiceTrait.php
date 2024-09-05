@@ -20,7 +20,7 @@ trait TokenServiceTrait
      */
     protected $tokenService;
 
-    public function injectTokenService(TokenServiceInterface $tokenService)
+    public function injectTokenService(TokenServiceInterface $tokenService): void
     {
         $this->tokenService = $tokenService;
     }

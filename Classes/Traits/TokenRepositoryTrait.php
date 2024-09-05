@@ -29,7 +29,7 @@ trait TokenRepositoryTrait
      *
      * @param TokenRepository $repository
      */
-    public function injectTokenRepository(TokenRepository $repository)
+    public function injectTokenRepository(TokenRepository $repository): void
     {
         $this->repository = $repository;
     }

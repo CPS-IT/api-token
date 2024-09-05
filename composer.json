@@ -1,26 +1,26 @@
 {
-  "name": "cpsit/api-token",
-  "description": "Generate and validate token auth for api requests.",
-  "homepage": "https://github.com/CPS-IT/api-token",
-  "license": "GPL-2.0-or-later",
-  "type": "typo3-cms-extension",
-  "require": {
-    "typo3/cms-core": "^10.4||^11.5",
-    "ramsey/uuid": "^4.0",
-    "dwenzel/t3extension-tools": "^1.7 || ^2.0"
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-latest",
-    "nimut/testing-framework": "^5.2 || ^6.0"
-  },
-  "extra": {
-    "typo3/cms": {
-      "extension-key": "api_token"
-    }
-  },
-  "autoload": {
-    "psr-4": {
-      "CPSIT\\ApiToken\\": "Classes"
-    }
-  }
+	"name": "cpsit/api-token",
+	"description": "Generate and validate token auth for api requests.",
+	"homepage": "https://github.com/CPS-IT/api-token",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"require": {
+		"typo3/cms-core": "^12.4",
+		"ramsey/uuid": "^4.0",
+		"dwenzel/t3extension-tools": "dev-upgrade-12"
+	},
+	"require-dev": {
+		"roave/security-advisories": "dev-latest",
+		"nimut/testing-framework": "^5.2 || ^6.0"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "api_token"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"CPSIT\\ApiToken\\": "Classes"
+		}
+	}
 }

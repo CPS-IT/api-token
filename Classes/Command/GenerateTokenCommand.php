@@ -123,6 +123,7 @@ class GenerateTokenCommand extends Command
         if ($name === null) {
             $message = sprintf('Name "%s" is not valid. Please enter a correct name.', $name);
             if (!$json) {
+                // @extensionScannerIgnoreLine
                 $this->io->error($message);
             } else {
                 $this->io->writeln(json_encode(['error' => $message]));

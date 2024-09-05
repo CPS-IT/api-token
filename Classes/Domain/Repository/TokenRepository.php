@@ -43,7 +43,7 @@ class TokenRepository implements TokenRepositoryInterface
                     $queryBuilder->createNamedParameter($identifier)
                 )
             )
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         return $result ?: [];
@@ -55,7 +55,7 @@ class TokenRepository implements TokenRepositoryInterface
         $result = $this->getQueryBuilder()
             ->select('crdate', 'valid_until', 'uid', 'name', 'identifier', 'description', 'hidden')
             ->from(self::TABLE_NAME)
-            ->execute();
+            ->executeQuery();
 
         while ($row = $result->fetchAssociative()) {
             // Do something with that single row
