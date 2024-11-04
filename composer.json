@@ -7,7 +7,7 @@
 	"require": {
 		"typo3/cms-core": "^12.4",
 		"ramsey/uuid": "^4.0",
-		"dwenzel/t3extension-tools": "dev-upgrade-12"
+		"dwenzel/t3extension-tools": "^3.1"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",
