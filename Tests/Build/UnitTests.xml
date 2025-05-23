@@ -1,21 +1,35 @@
-<?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="true" backupStaticAttributes="false" bootstrap="../../.Build/vendor/nimut/testing-framework/res/Configuration/UnitTestsBootstrap.php" colors="true" convertErrorsToExceptions="true" convertWarningsToExceptions="true" forceCoversAnnotation="false" processIsolation="false" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" verbose="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-<coverage processUncoveredFiles="false">
-    <include>
-        <directory suffix=".php">../../Classes/</directory>
-    </include>
-    <report>
-        <clover outputFile="../../.Build/log/coverage/clover.xml"/>
-        <html outputDirectory="../../.Build/log/coverage/"/>
-        <text outputFile="php://stdout" showUncoveredFiles="true"/>
-    </report>
-</coverage>
-<testsuites>
-    <testsuite name="api-token tests">
-        <directory>../Unit/</directory>
-    </testsuite>
-</testsuites>
-<logging>
-    <junit outputFile="../../.Build/log/coverage/junit.xml"/>
-</logging>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.4/phpunit.xsd"
+    backupGlobals="true"
+    bootstrap="../../.Build/vendor/typo3/testing-framework/Resources/Core/Build/UnitTestsBootstrap.php"
+    cacheDirectory="../../.Build/phpunit/"
+    colors="true"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+>
+    <testsuites>
+        <testsuite name="api-token-unit">
+            <directory>../Unit/</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">../../Classes/</directory>
+        </include>
+    </source>
+    <coverage>
+        <report>
+            <clover outputFile="../../.Build/coverage/unit-clover.xml"/>
+            <html outputDirectory="../../.Build/coverage/unit-html/"/>
+            <text outputFile="php://stdout" showUncoveredFiles="false" showOnlySummary="true"/>
+        </report>
+    </coverage>
+    <logging>
+        <junit outputFile="../../.Build/coverage/unit-junit.xml"/>
+    </logging>
 </phpunit>

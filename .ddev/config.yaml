@@ -1,0 +1,33 @@
+name: api-token-testing
+type: typo3
+docroot: .Build/public
+php_version: "8.3"
+webserver_type: nginx-fpm
+router_http_port: "8080"
+router_https_port: "8443"
+xdebug_enabled: false
+additional_hostnames: []
+additional_fqdns: []
+database:
+  type: mariadb
+  version: "10.11"
+use_dns_when_possible: true
+composer_version: "2"
+
+# Enable needed extensions
+webimage_extra_packages:
+  - ghostscript
+  - imagemagick
+
+# Hooks for automated testing
+hooks:
+  post-start:
+    - exec: composer install
+    - exec: .Build/bin/typo3 install:setup --no-interaction --use-existing-database --admin-user-password=password
+
+# Performance optimizations for testing
+performance_mode: mutagen
+
+# Environment variables for testing
+web_environment:
+  - TYPO3_CONTEXT=Testing

@@ -1,10 +1,19 @@
 <?php
 
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
 
 namespace CPSIT\ApiToken\Authentication;
@@ -59,16 +68,19 @@ class ApiKeyAuthentication implements HeaderAwareInterface
         $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);
     }
 
+    #[\Override]
     public function isAuthenticated(): bool
     {
         return $this->authenticated ?? false;
     }
 
+    #[\Override]
     public function getMethod(): string
     {
         return $this->method;
     }
 
+    #[\Override]
     public function validUntil(): \DateTimeImmutable
     {
         return $this->validUntil ?? new \DateTimeImmutable('0000-00-00T00:00:00+00:00');
@@ -78,6 +90,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      * @param string $name
      * @return bool
      */
+    #[\Override]
     public function validateHeaderName(string $name): bool
     {
         return strtolower($name) === static::HEADER_NAME_AUTHORIZATION;
@@ -114,6 +127,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      * @return HeaderAwareInterface
      * @throws \Exception
      */
+    #[\Override]
     public function fromHeader(string $secret, string $name = self::HEADER_NAME_AUTHORIZATION): HeaderAwareInterface
     {
 

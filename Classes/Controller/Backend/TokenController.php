@@ -1,11 +1,21 @@
 <?php
 
 declare(strict_types=1);
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
 
 namespace CPSIT\ApiToken\Controller\Backend;
@@ -27,7 +37,7 @@ final class TokenController extends ActionController
 {
     use TokenServiceTrait;
 
-    public const TABLE_NAME = Token::TABLE_NAME;
+    public const string TABLE_NAME = Token::TABLE_NAME;
 
     public function __construct(
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
@@ -38,7 +48,7 @@ final class TokenController extends ActionController
     /**
      * Displays list of tokens
      */
-    public function listAction(): \Psr\Http\Message\ResponseInterface
+    public function listAction(): ResponseInterface
     {
         $records = $this->tokenRepository->findAllRecords();
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -48,7 +58,7 @@ final class TokenController extends ActionController
                 'records' => $records,
                 'tokenIconIdentifier' => Extension::TOKEN_SVG,
                 'route' => '/',
-                'tableName' => \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME,
+                'tableName' => Token::TABLE_NAME,
             ]
         );
         return $moduleTemplate->renderResponse('Backend/Token/List');
@@ -60,9 +70,9 @@ final class TokenController extends ActionController
      * @param Token|null $newToken
      * @throws \Exception
      */
-    public function newAction(Token $newToken = null): \Psr\Http\Message\ResponseInterface
+    public function newAction(Token $newToken = null): ResponseInterface
     {
-        $newToken = $newToken ?? new Token();
+        $newToken ??= new Token();
         $secret = $this->tokenService->generateSecret();
         $hash = $this->tokenService->hash($secret);
         $identifier = $this->tokenService->generateIdentifier();

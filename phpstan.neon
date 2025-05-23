@@ -1,0 +1,30 @@
+includes:
+		- %currentWorkingDirectory%/.Build/vendor/saschaegerer/phpstan-typo3/extension.neon
+
+parameters:
+		level: 8
+		paths:
+				- Classes
+				- Configuration
+				- Tests
+
+		# Exclude specific files if needed
+		excludePaths:
+				- Tests/Build/*
+
+		# Report unmatched ignored errors
+		reportUnmatchedIgnoredErrors: false
+
+		# Symfony DI container
+		symfony:
+				containerXmlPath: '%currentWorkingDirectory%/.Build/var/cache/code/di/*.xml'
+
+		# TYPO3 specific configuration
+		typo3:
+				isInTypo3Mode: true
+				configFiles:
+						- %currentWorkingDirectory%/.Build/vendor/typo3/cms-core/Configuration/Services.yaml
+						- %currentWorkingDirectory%/Configuration/Services.yaml
+
+		ignoreErrors:
+				# Add specific errors to ignore if needed

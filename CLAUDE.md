@@ -8,14 +8,68 @@ This is a TYPO3 CMS extension (`cpsit/api-token`) that provides secure token-bas
 
 ## Development Commands
 
+### Quick Start
+
+```bash
+# Install dependencies
+composer install
+
+# Run all tests
+composer test
+
+# Run static analysis and linting
+composer ci:static
+
+# Fix code style issues
+composer fix
+```
+
 ### Testing
 
 ```bash
-# Run unit tests
-./vendor/bin/phpunit -c Tests/Build/UnitTests.xml
+# Run unit tests only
+composer test:unit
 
-# Run tests with coverage (outputs to .Build/log/coverage/)
-./vendor/bin/phpunit -c Tests/Build/UnitTests.xml --coverage-html .Build/log/coverage/
+# Run functional tests only
+composer test:functional
+
+# Run tests with coverage
+composer test:coverage
+
+# Run CI pipeline locally
+composer ci
+```
+
+### Code Quality
+
+```bash
+# Lint all files
+composer lint
+
+# Fix PHP code style
+composer fix:php
+
+# Run static analysis (PHPStan)
+composer sca:php
+
+# Run Rector for code migration
+composer migration:rector
+```
+
+### Development Environments
+
+```bash
+# Using DDEV
+ddev start
+ddev composer install
+
+# Using Docker
+docker-compose -f docker-compose.testing.yml up
+
+# Using Makefile
+make install
+make test
+make ci
 ```
 
 ### API Token Management
@@ -55,15 +109,46 @@ if(\CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator::isNotAuthenticated(
 - `x-api-identifier`: The token identifier
 - `application-authorization`: The secret token
 
+## Testing Framework
+
+The extension uses a modern testing setup based on TYPO3 TestingFramework v8.2+:
+
+### Test Structure
+- **Unit Tests**: `Tests/Unit/` - Pure unit tests with mocked dependencies
+- **Functional Tests**: `Tests/Functional/` - Integration tests with TYPO3 database
+- **Test Configuration**: `Tests/Build/` - PHPUnit configurations for different test types
+
+### Code Quality Tools
+- **PHP CS Fixer**: TYPO3 coding standards compliance
+- **PHPStan**: Static analysis at level 8
+- **Rector**: Automated code migration for TYPO3
+- **TypoScript Lint**: TypoScript syntax validation
+- **EditorConfig**: File formatting consistency
+
+### CI/CD Pipeline
+- **GitHub Actions**: Automated testing across PHP 8.2/8.3 and TYPO3 v12/v13
+- **Coverage Reports**: Codecov integration with merged coverage
+- **DDEV Support**: Local development environment
+- **Docker**: Containerized testing environment
+
 ## Dependencies
 
-- **TYPO3 CMS**: `^12.4 || ^13.0` (compatible with TYPO3 v12 and v13)
+### Runtime
+- **PHP**: `^8.2`
+- **TYPO3 CMS**: `^12.4 || ^13.0`
 - **Ramsey UUID**: `^4.0` (UUID generation)
-- **nimut/testing-framework**: Testing framework for TYPO3 extensions
+
+### Development
+- **TYPO3 TestingFramework**: `^8.2` (modern testing)
+- **PHPUnit**: `^10.5 || ^11.0` (latest PHPUnit)
+- **TYPO3 Coding Standards**: `^0.8.0`
+- **PHPStan**: `^1.12` with TYPO3 extensions
+- **Rector**: `^2.8` for TYPO3 migrations
 
 ## Extension Configuration
 
 - **Extension Key**: `api_token`
 - **Namespace**: `CPSIT\ApiToken`
 - **PSR-4 Autoloading**: `Classes/` directory
-- **Current State**: Alpha (v0.9.6)
+- **Minimum PHP**: `8.2`
+- **Target TYPO3**: `12.4 LTS` and `13.x`

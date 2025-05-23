@@ -3,10 +3,19 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the iki Extension for TYPO3 CMS.
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
 
 namespace CPSIT\ApiToken\Tests\Unit\Authentication;
@@ -16,29 +25,25 @@ use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
+#[CoversClass(ApiKeyAuthentication::class)]
 class ApiKeyAuthenticationTest extends UnitTestCase
 {
-    /**
-     * @var ApiKeyAuthentication
-     */
-    protected $subject;
+    protected ApiKeyAuthentication $subject;
+    protected TokenRepository|MockObject $tokenRepository;
+    protected TokenServiceInterface|MockObject $tokenService;
 
-    /**
-     * @var TokenRepository|MockObject
-     */
-    protected $tokenRepository;
-
-    /**
-     * @var TokenServiceInterface
-     */
-    protected $tokenService;
-
-    public function setUp(): void
+    #[\Override]
+    protected function setUp(): void
     {
-        $this->tokenService = $this->getMockForAbstractClass(TokenServiceInterface::class);
+        parent::setUp();
+
+        $this->tokenService = $this->createMock(TokenServiceInterface::class);
         $this->tokenRepository = $this->getMockBuilder(TokenRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(
@@ -50,22 +55,26 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         $this->subject = new ApiKeyAuthentication($this->tokenService, $this->tokenRepository);
     }
 
+    #[Test]
     public function testIsAuthenticatedInitiallyReturnsFalse(): void
     {
         self::assertFalse($this->subject->isAuthenticated());
     }
 
+    #[Test]
     public function testValidateHeaderNameReturnsFalseForInvalidName(): void
     {
         $name = 'invalidFooName';
         self::assertFalse($this->subject->validateHeaderName($name));
     }
 
+    #[Test]
     public function testValidateHeaderNameReturnsTrueForValidName(): void
     {
         self::assertTrue($this->subject->validateHeaderName(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION));
     }
 
+    #[Test]
     public function testValidUntilInitiallyReturnsPastDateTime(): void
     {
         $now = new \DateTimeImmutable('now');
@@ -74,9 +83,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertTrue($now > $validUntil);
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForInvalidName(): void
     {
         $invalidHeaderName = 'booFar';
@@ -86,9 +93,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($invalidAuthentication->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyValue(): void
     {
         $invalidHeaderName = '';
@@ -98,9 +103,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($invalidAuthentication->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptResultFromRepository(): void
     {
         $secret = 'foo';
@@ -118,9 +121,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($invalidAuthentication->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyIdentifier(): void
     {
         $secret = 'foo';
@@ -128,9 +129,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($authentication->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsAuthenticatedInstanceForValidHeader(): void
     {
         $validSecret = 'foo';
@@ -164,12 +163,16 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertEquals($validUntil, $authentication->validUntil());
     }
 
+    #[Test]
     public function testGetMethodInitiallyReturnsGet(): void
     {
         self::assertSame(RestApiInterface::METHOD_GET, $this->subject->getMethod());
     }
 
-    public function validMethodsDataProvider(): array
+    /**
+     * @return array<string, array<string>>
+     */
+    public static function validMethodsDataProvider(): array
     {
         $data = [];
         foreach (RestApiInterface::VALID_METHODS as $method) {
@@ -179,20 +182,15 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         return $data;
     }
 
-    /**
-     * @param $method
-     * @dataProvider validMethodsDataProvider
-     * @throws InvalidHttpMethodException
-     */
-    public function testWithMethodSetsValidMethods($method): void
+    #[Test]
+    #[DataProvider('validMethodsDataProvider')]
+    public function testWithMethodSetsValidMethods(string $method): void
     {
         $this->subject->withMethod($method);
         self::assertSame($method, $this->subject->getMethod());
     }
 
-    /**
-     * @throws InvalidHttpMethodException
-     */
+    #[Test]
     public function testWithMethodThrowsExceptionForInvalidMethod(): void
     {
         $invalidMethod = 'foo';
@@ -201,9 +199,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         $this->subject->withMethod($invalidMethod);
     }
 
-    /**
-     * @throws \Exception
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptySecret(): void
     {
         $secret = '';
@@ -211,10 +207,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($result->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     * @noinspection DuplicatedCode
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForExpiredValidUntil(): void
     {
         $validSecret = 'foo';
@@ -241,10 +234,7 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         self::assertFalse($authentication->isAuthenticated());
     }
 
-    /**
-     * @throws \Exception
-     * @noinspection DuplicatedCode
-     */
+    #[Test]
     public function testFromHeaderReturnsNonAuthenticatedInstanceForEmptyHash(): void
     {
         $validSecret = 'foo';

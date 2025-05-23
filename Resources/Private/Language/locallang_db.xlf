@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
-    <file source-language="en" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token">
-        <header />
-        <body>
-            <trans-unit id="tabs.api">
-                <source>API</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token">
-                <source>API Token</source>
-            </trans-unit>
-            <trans-unit id="siteConfiguration.apiBasePath">
-                <source>API base path</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.name">
-                <source>Name</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.hash">
-                <source>Hash</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.valid_until">
-                <source>valid until</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.site">
-                <source>Site</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.identifier">
-                <source>Identifier</source>
-            </trans-unit>
-            <trans-unit id="tx_apitoken_domain_model_token.description">
-                <source>Description</source>
-            </trans-unit>
-        </body>
-    </file>
+	<file source-language="en" datatype="plaintext" date="2020-01-15T14:21:32Z" product-name="api_token">
+		<header />
+		<body>
+			<trans-unit id="tabs.api">
+				<source>API</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token">
+				<source>API Token</source>
+			</trans-unit>
+			<trans-unit id="siteConfiguration.apiBasePath">
+				<source>API base path</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.name">
+				<source>Name</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.hash">
+				<source>Hash</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.valid_until">
+				<source>valid until</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.site">
+				<source>Site</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.identifier">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="tx_apitoken_domain_model_token.description">
+				<source>Description</source>
+			</trans-unit>
+		</body>
+	</file>
 </xliff>
