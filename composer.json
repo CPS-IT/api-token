@@ -5,9 +5,8 @@
 	"license": "GPL-2.0-or-later",
 	"type": "typo3-cms-extension",
 	"require": {
-		"typo3/cms-core": "^12.4",
-		"ramsey/uuid": "^4.0",
-		"dwenzel/t3extension-tools": "^3.1"
+		"typo3/cms-core": "^12.4 || ^13.0",
+		"ramsey/uuid": "^4.0"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",

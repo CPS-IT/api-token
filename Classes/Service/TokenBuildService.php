@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
@@ -6,8 +7,8 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace CPSIT\ApiToken\Service;
 
+namespace CPSIT\ApiToken\Service;
 
 use CPSIT\ApiToken\Domain\Model\Token;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,8 +30,7 @@ class TokenBuildService
         string $description,
         string $identifier,
         string $hash
-    ): Token
-    {
+    ): Token {
         $duration = $this->getDuration();
         return GeneralUtility::makeInstance(Token::class)
             ->setName($name)

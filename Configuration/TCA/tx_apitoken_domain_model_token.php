@@ -1,4 +1,5 @@
 <?php
+
 defined('TYPO3') or die();
 
 $tableName = \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME;
@@ -54,7 +55,7 @@ return [
             'exclude' => 1,
             'config' => [
                 'type' => 'input',
-                'readOnly' => true
+                'readOnly' => true,
             ],
         ],
         'identifier' => [
@@ -71,8 +72,8 @@ return [
             'config' => [
                 'type' => 'datetime',
                 'default' => 0,
-                'readOnly' => false
-            ]
+                'readOnly' => false,
+            ],
         ],
         'description' => [
             'label' => \CPSIT\ApiToken\Configuration\Localization::forField('description', $tableName),

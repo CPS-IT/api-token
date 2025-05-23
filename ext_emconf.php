@@ -1,4 +1,5 @@
 <?php
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Api Token',
     'description' => 'Generate and validate token auth for api requests.',
@@ -12,7 +13,7 @@ $EM_CONF[$_EXTKEY] = [
         [
             'depends' =>
                 [
-                    'typo3' => '12.4.0-12.4.99',
+                    'typo3' => '12.4.0-13.4.99',
                 ],
             'conflicts' =>
                 [
@@ -20,5 +21,5 @@ $EM_CONF[$_EXTKEY] = [
             'suggests' =>
                 [
                 ],
-        ]
+        ],
 ];

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
@@ -6,9 +7,9 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Service;
 
-use Exception;
 use CPSIT\ApiToken\Crypto\Random;
 use CPSIT\ApiToken\Crypto\RandomInterface;
 use Ramsey\Uuid\Rfc4122\UuidV4;
@@ -53,7 +54,7 @@ class TokenService implements TokenServiceInterface
     /**
      * @param int $lenght
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function generateIdentifier(int $lenght = 13)
     {

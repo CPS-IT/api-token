@@ -1,13 +1,13 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace CPSIT\ApiToken\Authentication;
 
-use DateTimeImmutable;
+namespace CPSIT\ApiToken\Authentication;
 
 interface AuthenticationInterface
 {
@@ -19,12 +19,12 @@ interface AuthenticationInterface
     /**
      * @return string
      */
-    public function getMethod():string;
+    public function getMethod(): string;
 
     /**
      * Until when the authentication is valid
      *
-     * @return DateTimeImmutable
+     * @return \DateTimeImmutable
      */
-    public function validUntil(): DateTimeImmutable;
+    public function validUntil(): \DateTimeImmutable;
 }

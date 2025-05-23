@@ -1,16 +1,17 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Command;
 
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Service\TokenBuildService;
 use CPSIT\ApiToken\Service\TokenService;
-use CPSIT\ApiToken\Service\TokenServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,7 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
     (Please keep information safely and secure. Token is shown only once.)
 
  * Persists name, description, identifier, date of expiration (1 year) and hash value to verify token by API call.
- *
  */
 class GenerateTokenCommand extends Command
 {
@@ -62,7 +62,6 @@ class GenerateTokenCommand extends Command
      * @var ?TokenBuildService
      */
     protected ?TokenBuildService $tokenBuildService;
-
 
     /**
      * {@inheritDoc}
@@ -116,7 +115,7 @@ class GenerateTokenCommand extends Command
         // Parse options
         $name = $input->getOption('name') ?? null;
         $description = $input->getOption('description') ?? null;
-        $json = (bool) $input->getOption('json');
+        $json = (bool)$input->getOption('json');
 
         // Process "name" option
         $name = $this->processName($name);
@@ -146,10 +145,12 @@ class GenerateTokenCommand extends Command
         $hash = $this->tokenService->hash($secret);
 
         $this->repository->persistNewToken(
-            $this->tokenBuildService->buildInitialToken($name,
+            $this->tokenBuildService->buildInitialToken(
+                $name,
                 $description,
                 $identifier,
-                $hash)
+                $hash
+            )
         );
 
         if (!$json) {
@@ -157,7 +158,7 @@ class GenerateTokenCommand extends Command
                 'Your token was successfully generated.',
                 'Identifier: ' . $identifier,
                 'Secret: ' . $secret,
-                '(Please keep information safely and secure. Token is shown only once.)'
+                '(Please keep information safely and secure. Token is shown only once.)',
             ]);
         } else {
             $this->io->writeln(json_encode([
@@ -180,10 +181,10 @@ class GenerateTokenCommand extends Command
         if ($name === null) {
             $question = new Question('Please enter the token name');
             $question->setValidator(function ($input) {
-                if ($input === null || trim((string) $input) === '') {
-                    throw new \InvalidArgumentException('Please enter a valid name.');
+                if ($input === null || trim((string)$input) === '') {
+                    throw new \InvalidArgumentException('Please enter a valid name.', 6951996697);
                 }
-                return (string) $input;
+                return (string)$input;
             });
             return $this->io->askQuestion($question);
         }
@@ -201,7 +202,7 @@ class GenerateTokenCommand extends Command
     {
         if ($description === null) {
             $question = new Question('Please enter a description for the token', '');
-            $description = (string) $this->io->askQuestion($question);
+            $description = (string)$this->io->askQuestion($question);
         }
         return $description;
     }

@@ -1,11 +1,14 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Context;
+
 use TYPO3\CMS\Core\Context\Exception\AspectPropertyNotFoundException;
 
 trait AspectPropertyAccessTrait
@@ -20,7 +23,7 @@ trait AspectPropertyAccessTrait
             $message = sprintf(
                 'Invalid property %s in class %s',
                 $name,
-                get_class($this)
+                static::class
             );
 
             throw new AspectPropertyNotFoundException(

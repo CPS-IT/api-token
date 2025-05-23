@@ -1,13 +1,13 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
-namespace CPSIT\ApiToken\Service;
 
-use Exception;
+namespace CPSIT\ApiToken\Service;
 
 /**
  * Class TokenService
@@ -25,7 +25,7 @@ interface TokenServiceInterface
     /**
      * @param int $lenght
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
     public function generateIdentifier(int $lenght = 13);
 

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Request\Validation;
 
 use CPSIT\ApiToken\Http\ResponseFactory;
@@ -25,7 +27,6 @@ use TYPO3\CMS\Core\Http\JsonResponse;
  */
 class ApiTokenAuthenticator implements Authenticator
 {
-
     public static function isNotAuthenticated(ServerRequestInterface $request): bool
     {
         return !(new AuthenticatedValidator())->validate($request);

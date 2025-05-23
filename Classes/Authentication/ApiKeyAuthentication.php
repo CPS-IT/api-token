@@ -1,18 +1,16 @@
 <?php
+
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
  */
+
 namespace CPSIT\ApiToken\Authentication;
 
-use DateTimeImmutable;
-use DateTimeZone;
-use Exception;
 use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
-use CPSIT\ApiToken\Domain\Repository\TokenRepositoryInterface;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Service\TokenService;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
@@ -24,7 +22,6 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     use TokenRepositoryTrait;
     public const HEADER_NAME_AUTHORIZATION = 'application-authorization';
     public const HEADER_NAME_IDENTIFIER = RestApiInterface::HEADER_NAME_IDENTIFIER;
-
 
     /**
      * @var bool
@@ -41,7 +38,6 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      */
     protected $tokenService;
 
-
     /**
      * @var string
      */
@@ -53,7 +49,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     protected $token;
 
     /**
-     * @var DateTimeImmutable
+     * @var \DateTimeImmutable
      */
     protected $validUntil;
 
@@ -73,9 +69,9 @@ class ApiKeyAuthentication implements HeaderAwareInterface
         return $this->method;
     }
 
-    public function validUntil(): DateTimeImmutable
+    public function validUntil(): \DateTimeImmutable
     {
-        return $this->validUntil ?? new DateTimeImmutable('0000-00-00T00:00:00+00:00');
+        return $this->validUntil ?? new \DateTimeImmutable('0000-00-00T00:00:00+00:00');
     }
 
     /**
@@ -84,10 +80,10 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      */
     public function validateHeaderName(string $name): bool
     {
-        return (strtolower($name) === static::HEADER_NAME_AUTHORIZATION);
+        return strtolower($name) === static::HEADER_NAME_AUTHORIZATION;
     }
 
-    public function withIdentifier(string $identifier):self
+    public function withIdentifier(string $identifier): self
     {
         $this->identifier = $identifier;
         $this->token = $this->repository->findOneRecordByIdentifier($this->identifier);
@@ -100,10 +96,9 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      * @return ApiKeyAuthentication
      * @throws InvalidHttpMethodException
      */
-    public function withMethod(string $method):ApiKeyAuthentication
+    public function withMethod(string $method): ApiKeyAuthentication
     {
-        if (!in_array($method, RestApiInterface::VALID_METHODS))
-        {
+        if (!in_array($method, RestApiInterface::VALID_METHODS)) {
             throw new InvalidHttpMethodException(
                 sprintf('API does not support method %s!', $method),
                 1585497878
@@ -117,7 +112,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      * @param string $name
      * @param string $secret
      * @return HeaderAwareInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function fromHeader(string $secret, string $name = self::HEADER_NAME_AUTHORIZATION): HeaderAwareInterface
     {
@@ -130,11 +125,11 @@ class ApiKeyAuthentication implements HeaderAwareInterface
 
         if (!empty($this->token)) {
 
-            $timeZone = new DateTimeZone(date_default_timezone_get());
-            $now = new DateTimeImmutable('now', $timeZone);
+            $timeZone = new \DateTimeZone(date_default_timezone_get());
+            $now = new \DateTimeImmutable('now', $timeZone);
             $this->validUntil = (clone $now)->setTimestamp($this->token['valid_until']);
 
-            if(
+            if (
                 $this->validUntil <  $now ||
                 empty($this->token['hash'])
             ) {
@@ -143,7 +138,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
 
             $this->authenticated = $this->tokenService->check($secret, $this->token['hash']);
 
-            return  $this;
+            return $this;
         }
 
         // return default (invalid) instance
@@ -153,6 +148,5 @@ class ApiKeyAuthentication implements HeaderAwareInterface
 
         return $this;
     }
-
 
 }

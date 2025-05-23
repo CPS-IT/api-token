@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * This file is part of the api_token extension for TYPO3 CMS.
@@ -9,7 +10,6 @@ declare(strict_types=1);
 
 namespace CPSIT\ApiToken\Domain\Repository;
 
-use DateTime;
 use CPSIT\ApiToken\Domain\Model\Token;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -64,7 +64,7 @@ class TokenRepository implements TokenRepositoryInterface
 
         return array_map(
             static function ($tokenRecord) {
-                $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new DateTime('now'))->getTimestamp());
+                $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new \DateTime('now'))->getTimestamp());
                 $tokenRecord['is_hidden'] = $tokenRecord['hidden'] === 1;
                 return $tokenRecord;
             },

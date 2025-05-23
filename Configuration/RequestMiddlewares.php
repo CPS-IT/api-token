@@ -1,4 +1,5 @@
 <?php
+
 defined('TYPO3') or die();
 /**
  * This file is part of the api_token extension for TYPO3 CMS.

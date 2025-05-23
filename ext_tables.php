@@ -1,4 +1,5 @@
+
 <?php
 defined('TYPO3') or die();
 
-\CPSIT\ApiToken\Configuration\Extension::registerAndConfigureModules();
+// Backend modules are registered via Configuration/Backend/Modules.php
