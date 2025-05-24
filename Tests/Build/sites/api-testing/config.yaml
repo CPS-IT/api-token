@@ -1,0 +1,25 @@
+rootPageId: 1
+base: 'http://typo3-testing.local/'
+languages:
+  -
+    title: English
+    enabled: true
+    languageId: 0
+    base: /
+    typo3Language: default
+    locale: en_US.UTF-8
+    iso-639-1: en
+    navigationTitle: ''
+    hreflang: ''
+    direction: ''
+    flag: us
+routeEnhancers:
+  ApiRoutes:
+    type: Simple
+    routePath: '/api/{endpoint}'
+    defaults:
+      endpoint: ''
+    requirements:
+      endpoint: '(public|protected|admin)'
+    _arguments:
+      endpoint: endpoint

@@ -1,126 +1,136 @@
 {
-  "name": "cpsit/api-token",
-  "description": "Generate and validate token auth for api requests.",
-  "license": "GPL-2.0-or-later",
-  "type": "typo3-cms-extension",
-  "homepage": "https://github.com/CPS-IT/api-token",
-  "require": {
-	"php": "^8.3",
-	"ramsey/uuid": "^4.0",
-	"typo3/cms-core": "^12.4 || ^13.0"
-  },
-  "require-dev": {
-	"armin/editorconfig-cli": "^2.0",
-	"ergebnis/composer-normalize": "^2.43",
-	"friendsofphp/php-cs-fixer": "^3.64",
-	"helmich/typo3-typoscript-lint": "^3.1",
-	"phpstan/phpstan": "^1.12",
-	"phpstan/phpstan-phpunit": "^1.4",
-	"phpunit/phpunit": "^10.5 || ^11.0",
-	"roave/security-advisories": "dev-latest",
-	"saschaegerer/phpstan-typo3": "^1.10",
-	"ssch/typo3-rector": "^2.8",
-	"typo3/coding-standards": "^0.8.0",
-	"typo3/testing-framework": "^8.2"
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
-  "autoload": {
-	"psr-4": {
-	  "CPSIT\\ApiToken\\": "Classes"
-	}
-  },
-  "autoload-dev": {
-	"psr-4": {
-	  "CPSIT\\ApiToken\\Tests\\": "Tests"
-	}
-  },
-  "config": {
-	"allow-plugins": {
-	  "ergebnis/composer-normalize": true,
-	  "typo3/class-alias-loader": true,
-	  "typo3/cms-composer-installers": true
+	"name": "cpsit/api-token",
+	"description": "Generate and validate token auth for api requests.",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"homepage": "https://github.com/CPS-IT/api-token",
+	"require": {
+		"php": "^8.3",
+		"symfony/polyfill-uuid": "^1.31",
+		"typo3/cms-core": "^12.4 || ^13.0"
 	},
-	"bin-dir": ".Build/bin",
-	"sort-packages": true,
-	"vendor-dir": ".Build/vendor"
-  },
-  "extra": {
-	"typo3/cms": {
-	  "extension-key": "api_token",
-	  "web-dir": ".Build/public"
+	"require-dev": {
+		"armin/editorconfig-cli": "^2.0",
+		"cpsit/test-api-extension": "dev-develop",
+		"ergebnis/composer-normalize": "^2.43",
+		"friendsofphp/php-cs-fixer": "^3.64",
+		"helmich/typo3-typoscript-lint": "^3.1",
+		"phpstan/phpstan": "^1.12",
+		"phpstan/phpstan-phpunit": "^1.4",
+		"phpunit/phpunit": "^10.5 || ^11.0",
+		"roave/security-advisories": "dev-latest",
+		"saschaegerer/phpstan-typo3": "^1.10",
+		"ssch/typo3-rector": "^2.8",
+		"typo3/coding-standards": "^0.8.0",
+		"typo3/testing-framework": "^8.2"
+	},
+	"repositories": [
+		{
+			"type": "path",
+			"url": "Tests/Functional/Fixtures/Extensions/*"
+		}
+	],
+	"minimum-stability": "stable",
+	"prefer-stable": true,
+	"autoload": {
+		"psr-4": {
+			"CPSIT\\ApiToken\\": "Classes"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"CPSIT\\ApiToken\\Tests\\": "Tests"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"ergebnis/composer-normalize": true,
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		},
+		"bin-dir": ".Build/bin",
+		"preferred-install": {
+			"*": "dist"
+		},
+		"sort-packages": true,
+		"vendor-dir": ".Build/vendor"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "api_token",
+			"web-dir": ".Build/web"
+		}
+	},
+	"scripts": {
+		"ci": [
+			"@ci:static"
+		],
+		"ci:composer:normalize": "@composer normalize --dry-run",
+		"ci:coverage": [
+			"@ci:coverage:unit",
+			"@ci:coverage:functional"
+		],
+		"ci:coverage:functional": "@test:coverage:functional",
+		"ci:coverage:merge": "phpcov merge --clover=.Build/coverage/clover.xml .Build/coverage/",
+		"ci:coverage:unit": "@test:coverage:unit",
+		"ci:dynamic": [
+			"@ci:tests"
+		],
+		"ci:static": [
+			"@ci:composer:normalize",
+			"@lint:composer",
+			"@lint:editorconfig",
+			"@lint:php",
+			"@lint:typoscript",
+			"@sca"
+		],
+		"ci:tests": [
+			"@test:unit",
+			"@test:functional"
+		],
+		"docs:generate": [
+			"docker run --rm --pull=always -v $(pwd):/data ghcr.io/typo3-documentation/render-guides:latest --config=Documentation"
+		],
+		"fix": [
+			"@fix:composer",
+			"@fix:editorconfig",
+			"@fix:php"
+		],
+		"fix:composer": "@composer normalize",
+		"fix:editorconfig": "ec --fix",
+		"fix:php": ".Build/bin/php-cs-fixer --verbose fix",
+		"fix:rector": ".Build/bin/rector process",
+		"lint": [
+			"@lint:composer",
+			"@lint:editorconfig",
+			"@lint:php",
+			"@lint:typoscript"
+		],
+		"lint:composer": "@composer validate --strict",
+		"lint:editorconfig": "ec",
+		"lint:php": ".Build/bin/php-cs-fixer fix --verbose --dry-run",
+		"lint:typoscript": ".Build/bin/typoscript-lint -c .typoscript-lint.yml",
+		"migration": [
+			"@migration:rector"
+		],
+		"migration:rector": ".Build/bin/rector process --dry-run",
+		"phpstan": ".Build/bin/phpstan analyze --ansi --no-progress",
+		"sca": [
+			"@sca:php"
+		],
+		"sca:php": "@phpstan",
+		"test": [
+			"@test:unit",
+			"@test:functional"
+		],
+		"test:coverage": [
+			"@test:coverage:unit",
+			"@test:coverage:functional",
+			"@ci:coverage:merge"
+		],
+		"test:coverage:functional": ".Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --coverage-php=.Build/coverage/functional.cov",
+		"test:coverage:unit": ".Build/bin/phpunit -c Tests/Build/UnitTests.xml --coverage-php=.Build/coverage/unit.cov",
+		"test:functional": ".Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --no-coverage",
+		"test:unit": ".Build/bin/phpunit -c Tests/Build/UnitTests.xml --no-coverage"
 	}
-  },
-  "scripts": {
-	"ci": [
-	  "@ci:static"
-	],
-	"ci:composer:normalize": "@composer normalize --dry-run",
-	"ci:coverage": [
-	  "@ci:coverage:unit",
-	  "@ci:coverage:functional"
-	],
-	"ci:coverage:functional": "@test:coverage:functional",
-	"ci:coverage:merge": "phpcov merge --clover=.Build/coverage/clover.xml .Build/coverage/",
-	"ci:coverage:unit": "@test:coverage:unit",
-	"ci:dynamic": [
-	  "@ci:tests"
-	],
-	"ci:static": [
-	  "@ci:composer:normalize",
-	  "@lint:composer",
-	  "@lint:editorconfig",
-	  "@lint:php",
-	  "@lint:typoscript",
-	  "@sca"
-	],
-	"ci:tests": [
-	  "@test:unit",
-	  "@test:functional"
-	],
-	"docs:generate": [
-	  "docker run --rm --pull=always -v $(pwd):/data ghcr.io/typo3-documentation/render-guides:latest --config=Documentation"
-	],
-	"fix": [
-	  "@fix:composer",
-	  "@fix:editorconfig",
-	  "@fix:php"
-	],
-	"fix:composer": "@composer normalize",
-	"fix:editorconfig": "ec --fix",
-	"fix:php": ".Build/bin/php-cs-fixer --verbose fix",
-	"fix:rector": ".Build/bin/rector process",
-	"lint": [
-	  "@lint:composer",
-	  "@lint:editorconfig",
-	  "@lint:php",
-	  "@lint:typoscript"
-	],
-	"lint:composer": "@composer validate --strict",
-	"lint:editorconfig": "ec",
-	"lint:php": ".Build/bin/php-cs-fixer fix --verbose --dry-run",
-	"lint:typoscript": ".Build/bin/typoscript-lint -c .typoscript-lint.yml",
-	"migration": [
-	  "@migration:rector"
-	],
-	"migration:rector": ".Build/bin/rector process --dry-run",
-	"phpstan": ".Build/bin/phpstan analyze --ansi --no-progress",
-	"sca": [
-	  "@sca:php"
-	],
-	"sca:php": "@phpstan",
-	"test": [
-	  "@test:unit",
-	  "@test:functional"
-	],
-	"test:coverage": [
-	  "@test:coverage:unit",
-	  "@test:coverage:functional",
-	  "@ci:coverage:merge"
-	],
-	"test:coverage:functional": ".Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --coverage-php=.Build/coverage/functional.cov",
-	"test:coverage:unit": ".Build/bin/phpunit -c Tests/Build/UnitTests.xml --coverage-php=.Build/coverage/unit.cov",
-	"test:functional": ".Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --no-coverage",
-	"test:unit": ".Build/bin/phpunit -c Tests/Build/UnitTests.xml --no-coverage"
-  }
 }

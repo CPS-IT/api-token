@@ -1,0 +1,19 @@
+{
+	"name": "cpsit/test-api-extension",
+	"type": "typo3-cms-extension",
+	"description": "Test extension for API token functional tests",
+	"require": {
+		"cpsit/api-token": "*",
+		"typo3/cms-core": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"CPSIT\\ApiToken\\TestApiExtension\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "test_api_extension"
+		}
+	}
+}

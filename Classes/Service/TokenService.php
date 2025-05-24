@@ -22,7 +22,6 @@ namespace CPSIT\ApiToken\Service;
 
 use CPSIT\ApiToken\Crypto\Random;
 use CPSIT\ApiToken\Crypto\RandomInterface;
-use Ramsey\Uuid\Rfc4122\UuidV4;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -55,11 +54,20 @@ class TokenService implements TokenServiceInterface
     #[\Override]
     public function generateSecret(): string
     {
-        $uuid = UuidV4::fromBytes(
-            $this->random->generateRandomBytes(16)
-        );
+        $randomBytes = $this->random->generateRandomBytes(16);
 
-        return $uuid->toString();
+        // Set version (4) and variant bits for UUID v4
+        $randomBytes[6] = chr(ord($randomBytes[6]) & 0x0f | 0x40); // Version 4
+        $randomBytes[8] = chr(ord($randomBytes[8]) & 0x3f | 0x80); // Variant bits
+
+        return sprintf(
+            '%08s-%04s-%04s-%04s-%12s',
+            bin2hex(substr($randomBytes, 0, 4)),
+            bin2hex(substr($randomBytes, 4, 2)),
+            bin2hex(substr($randomBytes, 6, 2)),
+            bin2hex(substr($randomBytes, 8, 2)),
+            bin2hex(substr($randomBytes, 10, 6))
+        );
     }
 
     /**

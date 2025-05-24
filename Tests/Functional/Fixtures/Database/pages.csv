@@ -1,0 +1,6 @@
+"pages",,,,,
+,"uid","pid","title","is_siteroot","slug"
+,1,0,"API Root",1,"/"
+,2,1,"API Public",0,"/api/public"
+,3,1,"API Protected",0,"/api/protected"
+,4,1,"API Admin",0,"/api/admin"

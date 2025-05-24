@@ -1,0 +1,46 @@
+# API endpoints using different typeNum values
+
+# Public API endpoint (typeNum 100)
+api_public = PAGE
+api_public {
+    typeNum = 100
+    config {
+        disableAllHeaderCode = 1
+        additionalHeaders.10.header = Content-Type: application/json
+        xhtml_cleaning = 0
+    }
+    10 = USER_INT
+    10 {
+        userFunc = CPSIT\ApiToken\TestApiExtension\Controller\ApiController->publicAction
+    }
+}
+
+# Protected API endpoint (typeNum 101)
+api_protected = PAGE
+api_protected {
+    typeNum = 101
+    config {
+        disableAllHeaderCode = 1
+        additionalHeaders.10.header = Content-Type: application/json
+        xhtml_cleaning = 0
+    }
+    10 = USER_INT
+    10 {
+        userFunc = CPSIT\ApiToken\TestApiExtension\Controller\ApiController->protectedAction
+    }
+}
+
+# Admin API endpoint (typeNum 102)
+api_admin = PAGE
+api_admin {
+    typeNum = 102
+    config {
+        disableAllHeaderCode = 1
+        additionalHeaders.10.header = Content-Type: application/json
+        xhtml_cleaning = 0
+    }
+    10 = USER_INT
+    10 {
+        userFunc = CPSIT\ApiToken\TestApiExtension\Controller\ApiController->adminAction
+    }
+}

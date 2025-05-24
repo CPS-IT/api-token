@@ -23,4 +23,4 @@ namespace CPSIT\ApiToken\Crypto;
 /*
  * Wrapper class just to provide an interface
  */
-class Random extends \TYPO3\CMS\Core\Crypto\Random implements RandomInterface {}
+readonly class Random extends \TYPO3\CMS\Core\Crypto\Random implements RandomInterface {}
