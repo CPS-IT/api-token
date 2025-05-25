@@ -18,30 +18,30 @@ parameters:
 	ignoreErrors:
 		# PHPUnit mock object method calls
 		- '#Call to an undefined method .+MockObject::(expects|method)\(\)#'
-		
+
 		# Test-specific issues
 		- '#Method .+ApiController::convertResponseToString\(\) is unused#'
-		
+
 		# Legacy TYPO3 method calls that might not be perfectly typed
 		- '#Call to an undefined method .+Repository.+::findOneRecordByIdentifier\(\)#'
-		
+
 		# Nullable service dependencies from DI
 		- '#Cannot call method .+ on .+\|null#'
-		
+
 		# Array type specifications for legacy TYPO3 code
 		- '#has no value type specified in iterable type array#'
 		- '#parameter .+ with no value type specified in iterable type array#'
-		
+
 		# PHPDoc issues in legacy code
 		- '#PHPDoc tag @return has invalid value#'
 		- '#PHPDoc tag @throws .+ is not subtype of Throwable#'
-		
+
 		# Property type issues that would require major refactoring
 		- '#Property .+ has no type specified#'
 		- '#Ternary operator condition is always true#'
-		
+
 		# Generic repository interface type specification
 		- '#Property .+::\$repository with generic interface .+ does not specify its types#'
-		
+
 		# Invalid PHPDoc values in legacy code
 		- '#PHPDoc tag @var has invalid value#'
