@@ -20,59 +20,73 @@ declare(strict_types=1);
 
 namespace CPSIT\ApiToken\TestApiExtension\Controller;
 
+use CPSIT\ApiToken\Http\ResponseFactory;
 use CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\JsonResponse;
 
 /**
  * Test API Controller for functional testing
  */
 class ApiController
 {
-    public function publicAction(string $content, array $config): string
+    public function publicAction(string $content, array $config, ServerRequestInterface $request): string
     {
         // This endpoint does not require authentication
-        return json_encode([
+        $response = ResponseFactory::createOkResponse([
             'status' => 'success',
             'message' => 'Public endpoint accessible',
-            'data' => ['timestamp' => time()]
+            'data' => ['timestamp' => time()],
         ]);
+
+        return $this->convertResponseToString($response);
     }
 
-    public function protectedAction(string $content, array $config): string
+    public function protectedAction(string $content, array $config, ServerRequestInterface $request): string
     {
         // This endpoint requires authentication
-        $request = $GLOBALS['TYPO3_REQUEST'];
         if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
-            http_response_code(403);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Forbidden',
-            ]);
+            $response = ResponseFactory::createForbiddenResponse('Access denied. Valid API token required.');
+            return $this->convertResponseToString($response);
         }
 
-        return json_encode([
+        $response = ResponseFactory::createOkResponse([
             'status' => 'success',
             'message' => 'Protected endpoint accessed',
-            'data' => ['authenticated' => true, 'timestamp' => time()]
+            'data' => ['authenticated' => true, 'timestamp' => time()],
         ]);
+
+        return $this->convertResponseToString($response);
     }
 
-    public function adminAction(string $content, array $config): string
+    public function adminAction(string $content, array $config, ServerRequestInterface $request): string
     {
         // This endpoint also requires authentication
-        $request = $GLOBALS['TYPO3_REQUEST'];
         if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
-            http_response_code(403);
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Forbidden',
-            ]);
+            $response = ResponseFactory::createForbiddenResponse('Access denied. Administrator privileges required.');
+            return $this->convertResponseToString($response);
         }
 
-        return json_encode([
+        $response = ResponseFactory::createOkResponse([
             'status' => 'success',
             'message' => 'Admin endpoint accessed',
-            'data' => ['role' => 'admin', 'timestamp' => time()]
+            'data' => ['role' => 'admin', 'timestamp' => time()],
         ]);
+
+        return $this->convertResponseToString($response);
+    }
+
+    /**
+     * Convert PSR-7 Response to string for TYPO3 USER function compatibility
+     */
+    private function convertResponseToString(ResponseInterface $response): string
+    {
+        // Set HTTP status code for the response
+        if ($response instanceof JsonResponse) {
+            http_response_code($response->getStatusCode());
+        }
+
+        return (string)$response->getBody();
     }
 }

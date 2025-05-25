@@ -24,8 +24,8 @@ use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Middleware\ApiKeyAuthenticator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 #[CoversClass(ApiKeyAuthenticator::class)]
 class ApiKeyAuthenticatorTest extends FunctionalTestCase
