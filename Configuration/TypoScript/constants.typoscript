@@ -2,11 +2,11 @@
 module.tx_apitoken_generatesecret {
   view {
     # cat=module.tx_apitoken_generatesecret/file; type=string; label=Path to template root (BE)
-    templateRootPath = EXT:api_token/Resources/Private/Backend/Templates/
+    templateRootPath =
     # cat=module.tx_apitoken_generatesecret/file; type=string; label=Path to template partials (BE)
-    partialRootPath = EXT:api_token/Resources/Private/Backend/Partials/
+    partialRootPath =
     # cat=module.tx_apitoken_generatesecret/file; type=string; label=Path to template layouts (BE)
-    layoutRootPath = EXT:api_token/Resources/Private/Backend/Layouts/
+    layoutRootPath =
   }
   persistence {
     # cat=module.tx_apitoken_generatesecret//a; type=string; label=Default storage PID

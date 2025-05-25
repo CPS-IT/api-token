@@ -6,15 +6,15 @@ module.tx_apitoken_system_apitokengeneratesecret {
   }
   view {
     templateRootPaths {
-      0 = {$module.tx_apitoken_generatesecret.view.templateRootPath}
+      0 = EXT:api_token/Resources/Private/Backend/Templates/
       1 = {$module.tx_apitoken_generatesecret.view.templateRootPath}
     }
     partialRootPaths {
-      0 = {$module.tx_apitoken_generatesecret.view.partialRootPath}
+      0 = EXT:api_token/Resources/Private/Backend/Partials/
       1 = {$module.tx_apitoken_generatesecret.view.partialRootPath}
     }
     layoutRootPaths {
-      0 = {$module.tx_apitoken_generatesecret.view.layoutRootPath}
+      0 = EXT:api_token/Resources/Private/Backend/Layouts/
       1 = {$module.tx_apitoken_generatesecret.view.layoutRootPath}
     }
   }
