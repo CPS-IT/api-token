@@ -87,7 +87,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
-          composer require cpsit/test-api-extension --no-update --dev
+          composer require cpsit/test-api-extension:@dev --no-update --dev
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
@@ -146,7 +146,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
-          composer require cpsit/test-api-extension --no-update --dev
+          composer require cpsit/test-api-extension:@dev --no-update --dev
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
