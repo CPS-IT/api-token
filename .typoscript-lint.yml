@@ -2,15 +2,22 @@ paths:
   - Configuration/TypoScript/
 
 sniffs:
-  - class: Helmich\TypoScriptLint\Linter\Sniff\IndentationSniff
+  - class: Indentation
     parameters:
-      indentPerLevel: 4
       useSpaces: true
-  - class: Helmich\TypoScriptLint\Linter\Sniff\DeadCodeSniff
-  - class: Helmich\TypoScriptLint\Linter\Sniff\OperatorWhitespaceSniff
-  - class: Helmich\TypoScriptLint\Linter\Sniff\DuplicateAssignmentSniff
-  - class: Helmich\TypoScriptLint\Linter\Sniff\EmptyBlockSniff
-  - class: Helmich\TypoScriptLint\Linter\Sniff\NestingConsistencySniff
+      indentPerLevel: 2
+      indentConditions: true
+  - class: DeadCode
+  - class: OperatorWhitespace
+  - class: RepeatingRValue
+    parameters:
+      allowedRightValues:
+        - "TYPO3\\CMS\\Frontend\\DataProcessing\\DatabaseQueryProcessor"
+  - class: DuplicateAssignment
+  - class: EmptySection
+  - class: NestingConsistency
+    parameters:
+      commonPathPrefixThreshold: 1
 
 filePatterns:
   - "*.typoscript"
