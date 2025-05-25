@@ -5219,12 +5219,12 @@
             "dist": {
                 "type": "path",
                 "url": "Tests/Functional/Fixtures/Extensions/test_api_extension",
-                "reference": "9d6a8dad886bde1adeb7d73f7b2f92680f5f1056"
+                "reference": "64c8f262a74803971e4bee6f8c6b144e3195d9e1"
             },
             "require": {
                 "cpsit/api-token": "*",
-                "typo3/cms-core": "*",
-                "typo3/cms-extbase": "*"
+                "typo3/cms-core": "^12.4 || ^13.0",
+                "typo3/cms-extbase": "^12.4 || ^13.0"
             },
             "type": "typo3-cms-extension",
             "extra": {

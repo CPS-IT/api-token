@@ -11,7 +11,6 @@
 	},
 	"require-dev": {
 		"armin/editorconfig-cli": "^2.0",
-		"cpsit/test-api-extension": "dev-develop",
 		"ergebnis/composer-normalize": "^2.43",
 		"friendsofphp/php-cs-fixer": "^3.64",
 		"helmich/typo3-typoscript-lint": "^3.1",
