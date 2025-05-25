@@ -13,13 +13,3 @@ languages:
     hreflang: ''
     direction: ''
     flag: us
-routeEnhancers:
-  ApiRoutes:
-    type: Simple
-    routePath: '/api/{endpoint}'
-    defaults:
-      endpoint: ''
-    requirements:
-      endpoint: '(public|protected|admin)'
-    _arguments:
-      endpoint: endpoint

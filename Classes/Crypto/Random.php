@@ -24,23 +24,26 @@ use TYPO3\CMS\Core\Crypto\Random as CoreRandom;
 
 class Random implements RandomInterface
 {
-    private CoreRandom $coreRandom;
+    private readonly CoreRandom $coreRandom;
 
     public function __construct()
     {
         $this->coreRandom = new CoreRandom();
     }
 
+    #[\Override]
     public function generateRandomBytes(int $length): string
     {
         return $this->coreRandom->generateRandomBytes($length);
     }
 
+    #[\Override]
     public function generateRandomInteger(int $min, int $max): int
     {
         return $this->coreRandom->generateRandomInteger($min, $max);
     }
 
+    #[\Override]
     public function generateRandomHexString(int $length): string
     {
         return $this->coreRandom->generateRandomHexString($length);

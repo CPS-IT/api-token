@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the api_token Extension for TYPO3 CMS.
  *
@@ -18,4 +20,15 @@
 
 defined('TYPO3') or die();
 
-// Nothing needed here for basic TypoScript configuration
+use CPSIT\ApiToken\TestApiExtension\Controller\ApiController;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+
+defined('TYPO3') or die();
+
+ExtensionUtility::configurePlugin(
+    'TestApiExtension',
+    'Testing',
+    [ApiController::class => 'protected'],
+    [ApiController::class => 'protected'],
+    ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT,
+);

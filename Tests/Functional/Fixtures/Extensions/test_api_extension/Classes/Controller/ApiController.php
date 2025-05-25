@@ -20,61 +20,30 @@ declare(strict_types=1);
 
 namespace CPSIT\ApiToken\TestApiExtension\Controller;
 
-use CPSIT\ApiToken\Http\ResponseFactory;
 use CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Http\PropagateResponseException;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Test API Controller for functional testing
  */
-class ApiController
+class ApiController extends ActionController
 {
-    public function publicAction(string $content, array $config, ServerRequestInterface $request): string
-    {
-        // This endpoint does not require authentication
-        $response = ResponseFactory::createOkResponse([
-            'status' => 'success',
-            'message' => 'Public endpoint accessible',
-            'data' => ['timestamp' => time()],
-        ]);
-
-        return $this->convertResponseToString($response);
-    }
-
-    public function protectedAction(string $content, array $config, ServerRequestInterface $request): string
+    public function protectedAction(): ResponseInterface
     {
         // This endpoint requires authentication
-        if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
-            $response = ResponseFactory::createForbiddenResponse('Access denied. Valid API token required.');
-            return $this->convertResponseToString($response);
+        if (ApiTokenAuthenticator::isNotAuthenticated($this->request)) {
+            $response = ApiTokenAuthenticator::returnErrorResponse();
+            throw new PropagateResponseException($response, $response->getStatusCode());
         }
 
-        $response = ResponseFactory::createOkResponse([
-            'status' => 'success',
-            'message' => 'Protected endpoint accessed',
-            'data' => ['authenticated' => true, 'timestamp' => time()],
-        ]);
-
-        return $this->convertResponseToString($response);
-    }
-
-    public function adminAction(string $content, array $config, ServerRequestInterface $request): string
-    {
-        // This endpoint also requires authentication
-        if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
-            $response = ResponseFactory::createForbiddenResponse('Access denied. Administrator privileges required.');
-            return $this->convertResponseToString($response);
-        }
-
-        $response = ResponseFactory::createOkResponse([
-            'status' => 'success',
-            'message' => 'Admin endpoint accessed',
-            'data' => ['role' => 'admin', 'timestamp' => time()],
-        ]);
-
-        return $this->convertResponseToString($response);
+        $response = new JsonResponse(
+            ['message' => 'Access granted'],
+            200
+        );
+        return $response;
     }
 
     /**

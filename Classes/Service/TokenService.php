@@ -62,11 +62,11 @@ class TokenService implements TokenServiceInterface
 
         return sprintf(
             '%08s-%04s-%04s-%04s-%12s',
-            bin2hex(substr($randomBytes, 0, 4)),
-            bin2hex(substr($randomBytes, 4, 2)),
-            bin2hex(substr($randomBytes, 6, 2)),
-            bin2hex(substr($randomBytes, 8, 2)),
-            bin2hex(substr($randomBytes, 10, 6))
+            bin2hex(substr((string)$randomBytes, 0, 4)),
+            bin2hex(substr((string)$randomBytes, 4, 2)),
+            bin2hex(substr((string)$randomBytes, 6, 2)),
+            bin2hex(substr((string)$randomBytes, 8, 2)),
+            bin2hex(substr((string)$randomBytes, 10, 6))
         );
     }
 
