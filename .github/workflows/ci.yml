@@ -150,6 +150,11 @@ jobs:
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
+      - name: Grant database permissions
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "GRANT ALL ON \`db_%\`.* TO \`db\`@\`%\`;"
+          mysql -h 127.0.0.1 -u root -proot -e "FLUSH PRIVILEGES;"
+
       - name: Run functional tests with coverage
         run: .Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --coverage-clover=.Build/coverage/functional-clover.xml
         env:
