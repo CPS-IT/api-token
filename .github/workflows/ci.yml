@@ -87,6 +87,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
+          composer require cpsit/test-api-extension:"dev-develop" --no-update --dev
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
@@ -145,6 +146,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
+          composer require cpsit/test-api-extension:"dev-develop" --no-update --dev
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
@@ -160,7 +162,7 @@ jobs:
           typo3DatabaseUsername: typo3
           typo3DatabasePassword: typo3
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecovh
         uses: codecov/codecov-action@v3
         with:
           file: .Build/coverage/functional-clover.xml
