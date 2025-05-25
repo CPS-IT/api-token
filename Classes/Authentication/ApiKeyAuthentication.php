@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the api_token Extension for TYPO3 CMS.
  *
@@ -141,7 +143,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
 
             $timeZone = new \DateTimeZone(date_default_timezone_get());
             $now = new \DateTimeImmutable('now', $timeZone);
-            $this->validUntil = (clone $now)->setTimestamp($this->token['valid_until']);
+            $this->validUntil = (clone $now)->setTimestamp((int)$this->token['valid_until']);
 
             if (
                 $this->validUntil <  $now ||

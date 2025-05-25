@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the api_token Extension for TYPO3 CMS.
  *
@@ -36,24 +38,24 @@ interface TokenServiceInterface
      * @return string
      * @throws \Exception
      */
-    public function generateIdentifier(int $lenght = 13);
+    public function generateIdentifier(int $lenght = 13): string;
 
     /**
      * Returns a salted hashed key
      * for the secret
      *
      * @param string $secret
-     * @return mixed
+     * @return string
      */
-    public function hash(string $secret);
+    public function hash(string $secret): string;
 
     /**
      * Tells if the plain text secret is correct by comparing it
      * with the salted hash
      *
      * @param string $secret The plain text secret to check for
-     * @param string $saltedHash The salted hash to check agains
+     * @param string $saltedHash The salted hash to check against
      * @return bool
      */
-    public function check(string $secret, $saltedHash);
+    public function check(string $secret, string $saltedHash): bool;
 }

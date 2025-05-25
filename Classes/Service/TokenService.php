@@ -76,7 +76,7 @@ class TokenService implements TokenServiceInterface
      * @throws \Exception
      */
     #[\Override]
-    public function generateIdentifier(int $lenght = 13)
+    public function generateIdentifier(int $lenght = 13): string
     {
         return $this->random->generateRandomHexString($lenght);
     }
@@ -86,10 +86,10 @@ class TokenService implements TokenServiceInterface
      * for the secret
      *
      * @param string $secret
-     * @return mixed
+     * @return string
      */
     #[\Override]
-    public function hash(string $secret)
+    public function hash(string $secret): string
     {
         return $this->hashInstance->getHashedPassword($secret);
     }
@@ -103,7 +103,7 @@ class TokenService implements TokenServiceInterface
      * @return bool
      */
     #[\Override]
-    public function check(string $secret, $saltedHash): bool
+    public function check(string $secret, string $saltedHash): bool
     {
         return $this->hashInstance->checkPassword($secret, $saltedHash);
     }

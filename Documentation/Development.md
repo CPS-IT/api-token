@@ -382,7 +382,7 @@ class MyService
 
 ### Code Style
 
-Follow TYPO3 coding standards:
+Follow TYPO3 coding standards with strict typing:
 
 ```php
 <?php
@@ -403,6 +403,50 @@ final class ExampleClass
     public function doSomething(string $parameter): bool
     {
         return true;
+    }
+}
+```
+
+#### Strict Type Declarations
+
+All classes in the API Token extension use `declare(strict_types=1);` to enable strict type checking. This provides:
+
+- **Type Safety**: Prevents implicit type conversions that could lead to bugs
+- **Better IDE Support**: Enhanced autocomplete and error detection
+- **Runtime Error Prevention**: Catches type mismatches early in development
+- **Code Documentation**: Method signatures serve as explicit contracts
+
+When contributing new code:
+
+- Always include `declare(strict_types=1);` at the top of PHP files
+- Use proper type hints for all method parameters and return values
+- Ensure nullable types are explicitly declared with `?Type` syntax
+- Cast values explicitly when type conversion is needed (e.g., `(int)$timestamp`)
+
+Example of strict typing best practices:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace CPSIT\ApiToken\Service;
+
+class TokenService implements TokenServiceInterface
+{
+    public function generateIdentifier(int $length = 13): string
+    {
+        return $this->random->generateRandomHexString($length);
+    }
+
+    public function hash(string $secret): string
+    {
+        return $this->hashInstance->getHashedPassword($secret);
+    }
+
+    public function check(string $secret, string $saltedHash): bool
+    {
+        return $this->hashInstance->checkPassword($secret, $saltedHash);
     }
 }
 ```
