@@ -33,7 +33,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     public const HEADER_NAME_IDENTIFIER = RestApiInterface::HEADER_NAME_IDENTIFIER;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     protected $authenticated;
 
@@ -53,12 +53,12 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     protected $method = RestApiInterface::METHOD_GET;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $token;
 
     /**
-     * @var \DateTimeImmutable
+     * @var \DateTimeImmutable|null
      */
     protected $validUntil;
 
