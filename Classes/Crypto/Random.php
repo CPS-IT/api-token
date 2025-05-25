@@ -20,7 +20,29 @@ declare(strict_types=1);
 
 namespace CPSIT\ApiToken\Crypto;
 
-/*
- * Wrapper class just to provide an interface
- */
-readonly class Random extends \TYPO3\CMS\Core\Crypto\Random implements RandomInterface {}
+use TYPO3\CMS\Core\Crypto\Random as CoreRandom;
+
+class Random implements RandomInterface
+{
+    private CoreRandom $coreRandom;
+
+    public function __construct()
+    {
+        $this->coreRandom = new CoreRandom();
+    }
+
+    public function generateRandomBytes(int $length): string
+    {
+        return $this->coreRandom->generateRandomBytes($length);
+    }
+
+    public function generateRandomInteger(int $min, int $max): int
+    {
+        return $this->coreRandom->generateRandomInteger($min, $max);
+    }
+
+    public function generateRandomHexString(int $length): string
+    {
+        return $this->coreRandom->generateRandomHexString($length);
+    }
+}
