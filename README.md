@@ -2,7 +2,7 @@
 
 [![TYPO3 12](https://img.shields.io/badge/TYPO3-12.4-orange.svg)](https://get.typo3.org/version/12)
 [![TYPO3 13](https://img.shields.io/badge/TYPO3-13.0-orange.svg)](https://get.typo3.org/version/13)
-[![PHP 8.1+](https://img.shields.io/badge/PHP-8.1+-blue.svg)](https://www.php.net/)
+[![PHP 8.3+](https://img.shields.io/badge/PHP-8.3+-blue.svg)](https://www.php.net/)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPL%20v2+-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
 
 Secure API authentication for TYPO3 CMS applications using token-based authentication.
@@ -71,7 +71,7 @@ curl -X POST "https://your-site.com/api/endpoint" \
 ## Requirements
 
 - **TYPO3**: 12.4 LTS or 13.0+
-- **PHP**: 8.1 or higher
+- **PHP**: 8.3 or higher
 - **Database**: MySQL 8.0+, MariaDB 10.5+, or PostgreSQL 12+
 
 ## Example Usage

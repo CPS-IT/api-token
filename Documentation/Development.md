@@ -7,7 +7,7 @@ This guide covers setting up a development environment and contributing to the A
 ### Prerequisites
 
 - **Docker** and **DDEV** (recommended)
-- **PHP 8.1+** with extensions: `json`, `openssl`, `pdo_mysql`
+- **PHP 8.3+** with extensions: `json`, `openssl`, `pdo_mysql`
 - **Composer 2.0+**
 - **Git**
 - **Node.js 16+** (for frontend tooling)
