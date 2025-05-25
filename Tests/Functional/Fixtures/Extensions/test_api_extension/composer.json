@@ -4,8 +4,8 @@
 	"description": "Test extension for API token functional tests",
 	"require": {
 		"cpsit/api-token": "*",
-		"typo3/cms-core": "*",
-		"typo3/cms-extbase": "*"
+		"typo3/cms-core": "^12.4 || ^13.0",
+		"typo3/cms-extbase": "^12.4 || ^13.0"
 	},
 	"autoload": {
 		"psr-4": {

@@ -87,7 +87,8 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
-          composer install --prefer-dist --no-progress
+          rm -f composer.lock
+          composer update --prefer-dist --no-progress
 
       - name: Run unit tests with coverage
         run: .Build/bin/phpunit -c Tests/Build/UnitTests.xml --coverage-clover=.Build/coverage/unit-clover.xml
@@ -144,7 +145,8 @@ jobs:
       - name: Install dependencies
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
-          composer install --prefer-dist --no-progress
+          rm -f composer.lock
+          composer update --prefer-dist --no-progress
 
       - name: Run functional tests with coverage
         run: .Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --coverage-clover=.Build/coverage/functional-clover.xml
