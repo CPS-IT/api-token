@@ -1,13 +1,25 @@
 <?php
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
+
 namespace CPSIT\ApiToken\Context;
 
-use DateTimeImmutable;
 use CPSIT\ApiToken\Authentication\AuthenticationInterface;
 use TYPO3\CMS\Core\Context\AspectInterface;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -46,26 +58,26 @@ class AuthenticatedAspect implements AspectInterface, SingletonInterface
     public const PROPERTIES = [
         self::AUTHENTICATED,
         self::VALID_UNTIL,
-        self::METHOD
+        self::METHOD,
     ];
     /**
      * @var bool
      */
-    static protected $authenticated = false;
+    protected static $authenticated = false;
     /**
-     * @var DateTimeImmutable|null
+     * @var \DateTimeImmutable|null
      */
-    static protected $validUntil;
+    protected static $validUntil;
     /**
      * Authentication method
      *
      * @var string
      */
-    static protected $method = self::METHOD_NONE;
+    protected static $method = self::METHOD_NONE;
 
     public function __construct(AuthenticationInterface $authentication = null)
     {
-        if (null !== $authentication) {
+        if ($authentication !== null) {
             self::$authenticated = $authentication->isAuthenticated();
             self::$method = $authentication->getMethod();
             self::$validUntil = $authentication->validUntil();

@@ -1,11 +1,23 @@
 <?php
+
 declare(strict_types=1);
-/**
- * This file is part of the "ApiToken" Extension for TYPO3 CMS.
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
+
 namespace CPSIT\ApiToken\Http;
 
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -44,7 +56,7 @@ class ResponseFactory
      */
     public static function createNotFoundResponse(string $reason = null): JsonResponse
     {
-        $reason = $reason ?? 'Resource not found.';
+        $reason ??= 'Resource not found.';
         return static::createErroneousResponse(404, $reason);
     }
 
@@ -54,7 +66,7 @@ class ResponseFactory
      */
     public static function createForbiddenResponse(string $reason = null): JsonResponse
     {
-        $reason = $reason ?? 'Access to requested resource is forbidden.';
+        $reason ??= 'Access to requested resource is forbidden.';
         return static::createErroneousResponse(403, $reason);
     }
 
@@ -64,7 +76,7 @@ class ResponseFactory
      */
     public static function createUnauthorizedResponse(string $reason = null): JsonResponse
     {
-        $reason = $reason ?? 'Requested resource needs authentication.';
+        $reason ??= 'Requested resource needs authentication.';
         return static::createErroneousResponse(401, $reason);
     }
 
@@ -74,7 +86,7 @@ class ResponseFactory
      */
     public static function createBadRequestResponse(string $reason = null): JsonResponse
     {
-        $reason = $reason ?? 'Request contains bad parameters.';
+        $reason ??= 'Request contains bad parameters.';
         return static::createErroneousResponse(400, $reason);
     }
 
@@ -85,7 +97,7 @@ class ResponseFactory
      */
     public static function createInternalServerErrorResponse(string $reason = null, \Exception $exception = null): JsonResponse
     {
-        $reason = $reason ?? 'Error during API request' . ($exception !== null ? ': ' . $exception->getMessage() : '.');
+        $reason ??= 'Error during API request' . ($exception !== null ? ': ' . $exception->getMessage() : '.');
         return static::createErroneousResponse(500, $reason);
     }
 

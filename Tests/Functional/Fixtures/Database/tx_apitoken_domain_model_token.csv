@@ -1,0 +1,3 @@
+"tx_apitoken_domain_model_token",,,,,,,,
+,"uid","pid","name","description","identifier","hash","valid_until","crdate"
+,1,0,"Test Token","Token for functional testing","test-identifier","$2y$10$abcdefghijklmnopqrstuvwxyz123456789",1893456000,1609459200

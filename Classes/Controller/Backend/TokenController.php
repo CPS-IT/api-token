@@ -1,11 +1,23 @@
 <?php
+
 declare(strict_types=1);
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
+
 namespace CPSIT\ApiToken\Controller\Backend;
 
 use CPSIT\ApiToken\Configuration\Extension;
@@ -13,49 +25,43 @@ use CPSIT\ApiToken\Domain\Model\Token;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Service\TokenBuildService;
 use CPSIT\ApiToken\Traits\TokenServiceTrait;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class TokenController extends ActionController
+#[AsController]
+final class TokenController extends ActionController
 {
     use TokenServiceTrait;
 
-    public const TABLE_NAME = Token::TABLE_NAME;
+    public const string TABLE_NAME = Token::TABLE_NAME;
 
-    /**
-     * @param TokenRepository $repository
-     */
-    protected TokenRepository $repository;
-
-    /**
-     * @var TokenBuildService
-     */
-    protected TokenBuildService $tokenBuildService;
-
-    public function __construct(?TokenBuildService $tokenBuildService = null, ?TokenRepository $repository = null)
-    {
-        $this->tokenBuildService = $tokenBuildService ?? GeneralUtility::makeInstance(TokenBuildService::class);
-        $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);
-    }
+    public function __construct(
+        protected readonly ModuleTemplateFactory $moduleTemplateFactory,
+        protected readonly TokenBuildService $tokenBuildService,
+        protected readonly TokenRepository $tokenRepository
+    ) {}
 
     /**
      * Displays list of tokens
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
-        $records = $this->repository->findAllRecords();
-
-        $this->view->assignMultiple(
+        $records = $this->tokenRepository->findAllRecords();
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setTitle('title');
+        $moduleTemplate->assignMultiple(
             [
                 'records' => $records,
                 'tokenIconIdentifier' => Extension::TOKEN_SVG,
-                'route'=> '/',
-                'tableName' => \CPSIT\ApiToken\Domain\Model\Token::TABLE_NAME,
+                'route' => '/',
+                'tableName' => Token::TABLE_NAME,
             ]
         );
+        return $moduleTemplate->renderResponse('Backend/Token/List');
     }
 
     /**
@@ -64,27 +70,23 @@ class TokenController extends ActionController
      * @param Token|null $newToken
      * @throws \Exception
      */
-    public function newAction(Token $newToken = null): void
+    public function newAction(Token $newToken = null): ResponseInterface
     {
-        $newToken = $newToken ?? new Token();
+        $newToken ??= new Token();
         $secret = $this->tokenService->generateSecret();
         $hash = $this->tokenService->hash($secret);
         $identifier = $this->tokenService->generateIdentifier();
 
-        $this->addFlashMessage(
-            LocalizationUtility::translate('message.saveIdentifierAndSecretNow', Extension::KEY),
-            LocalizationUtility::translate('header.saveIdentifierAndSecret', Extension::KEY),
-            FlashMessage::INFO
-        );
-
-        $this->view->assignMultiple(
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->assignMultiple(
             [
                 'identifier' => $identifier,
                 'secret' => $secret,
                 'hash' => $hash,
-                'newToken' => $newToken
+                'newToken' => $newToken,
             ]
         );
+        return $moduleTemplate->renderResponse('Backend/Token/New');
     }
 
     /**
@@ -95,9 +97,9 @@ class TokenController extends ActionController
      * @throws StopActionException
      * @throws \Exception
      */
-    public function createAction(array $newToken): void
+    public function createAction(array $newToken): ResponseInterface
     {
-        $this->repository->persistNewToken(
+        $this->tokenRepository->persistNewToken(
             $this->tokenBuildService->buildInitialToken(
                 $newToken['name'],
                 $newToken['description'],
@@ -105,7 +107,12 @@ class TokenController extends ActionController
                 $newToken['hash']
             )
         );
-        $this->redirect('list');
+        return $this->redirect('list');
+    }
+
+    protected function translate(string $key, ?array $arguments = null): string
+    {
+        return LocalizationUtility::translate($key, Extension::NAME, $arguments) ?? $key;
     }
 
 }

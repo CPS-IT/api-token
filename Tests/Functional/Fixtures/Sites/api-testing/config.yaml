@@ -1,0 +1,38 @@
+rootPageId: 1
+base: '/'
+errorHandling:
+  -
+    errorCode: 404
+    errorHandler: PHP
+    errorPhpClassFQCN: \CPSIT\ApiToken\TestApiExtension\Error\PageErrorHandler
+  -
+    errorCode: 404
+    errorHandler: PHP
+    errorPhpClassFQCN: \CPSIT\ApiToken\TestApiExtension\Error\PageErrorHandler
+  -
+    errorCode: 401
+    errorHandler: PHP
+    errorPhpClassFQCN: \CPSIT\ApiToken\TestApiExtension\Error\PageErrorHandler
+
+routeEnhancers:
+  PageTypeSuffix:
+    type: PageType
+    default: '/'
+    index: ''
+    map:
+      /: 0
+      news/func-test.json: 101
+
+languages:
+  -
+    title: English
+    enabled: true
+    languageId: 0
+    base: /
+    typo3Language: default
+    locale: en_US.UTF-8
+    iso-639-1: en
+    navigationTitle: ''
+    hreflang: ''
+    direction: ''
+    flag: us

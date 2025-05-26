@@ -2,51 +2,60 @@
       xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:layout name="Module" />
+<f:layout name="Module"/>
 
 <f:section name="main">
     <h1>{f:translate(key: 'module.tokenNew.header', default: 'Generate new API Token')}</h1>
 
-    <f:flashMessages />
+    <f:be.infobox title="{f:translate(key: 'header.saveIdentifierAndSecret')}" state="-1">{f:translate(key:
+        'message.saveIdentifierAndSecretNow')}
+    </f:be.infobox>
 
-    <f:form action="create" objectName="newToken" object="{newToken}" method="post" id="tx-apitoken-newtoken-form">
-        <dl>
+    <div class="clearfix">
+        <f:form action="create" objectName="newToken" object="{newToken}" method="post"
+                id="tx-apitoken-newtoken-form">
             <f:form.hidden property="hash" value="{hash}"/>
-            <dt>
-                <label for="tx-apitoken-token-secret">
-                    <f:translate key="label.identifier" default="label.identifier"/>
-                </label>
-            </dt>
-            <dd>
-                <div id="tx-apitoken-token-identifier">{f:format.raw(value: '{identifier}')}</div>
-                <f:form.hidden property="identifier" value="{identifier}"/>
-            </dd>
-            <dt>
-                <label for="tx-apitoken-token-secret">
-                    <f:translate key="label.secret" default="label.secret"/>
-                </label>
-            </dt>
-            <dd>
-                <div id="tx-apitoken-token-secret">{f:format.raw(value: secret)}</div>
-            </dd>
-            <dt>
-                <label for="tx-apitoken-token-name">
-                    <f:translate key="label.name" default="label.name"/>
-                </label>
-            </dt>
-            <dd>
-                <f:form.textfield property="name" id="tx-apitoken-token-name" required="1" />
-            </dd>
-            <dt>
-                <label for="tx-apitoken-token-description">
-                    <f:translate key="label.description" default="label.description"/>
-                </label>
-            </dt>
-            <dd>
-                <f:form.textarea property="description" id="tx-apitoken-token-description"/>
-            </dd>
-        </dl>
-    </f:form>
+            <f:form.hidden property="identifier" value="{identifier}"/>
+
+            <fieldset class="form-section">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="tx-apitoken-token-name"
+                               class="form-label">{f:translate(key:'label.name')}</label>
+                        <div class="formengine-field-item">
+                            <f:form.textfield
+                                class="form-control"
+                                maxlength="255"
+                                property="name" id="tx-apitoken-token-name" required="1"/>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="tx-apitoken-token-description" class="form-label">{f:translate(key:'label.description')}</label>
+                        <div class="formengine-field-item">
+                            <f:form.textarea
+                                class="form-control"
+                                rows="5"
+                                property="description" id="tx-apitoken-token-description"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </f:form>
+        <br>
+    </div>
+    <div class="card-container">
+        <div class="card card-success card-size-medium">
+            <div class="card-header"><h3>{f:translate(key:'label.identifier')}</h3></div>
+            <div class="card-body"><strong>{f:format.raw(value: '{identifier}')}</strong></div>
+        </div>
+        <div class="card card-success card-size-medium">
+            <div class="card-header"><h3>{f:translate(key:'label.secret')}</h3></div>
+            <div class="card-body"><strong>{f:format.raw(value: secret)}</strong></div>
+        </div>
+    </div>
 </f:section>
 
 <f:comment><!-- Header buttons --></f:comment>
@@ -55,7 +64,8 @@
         {c:icon(identifier: 'actions-close')}
         {f:translate(key: 'button.cancel', default: 'button.cancel')}
     </f:link.action>
-    <button type="submit" form="tx-apitoken-newtoken-form" class="btn btn-default btn-sm" id="tx-apitoken-newtoken-submit">
+    <button type="submit" form="tx-apitoken-newtoken-form" class="btn btn-default btn-sm"
+            id="tx-apitoken-newtoken-submit">
         {c:icon(identifier: 'actions-document-save')}
         {f:translate(key: 'button.submit')}
     </button>

@@ -1,0 +1,25 @@
+paths:
+  - Configuration/TypoScript/
+
+sniffs:
+  - class: Indentation
+    parameters:
+      useSpaces: true
+      indentPerLevel: 2
+      indentConditions: true
+  - class: DeadCode
+  - class: OperatorWhitespace
+  - class: RepeatingRValue
+    parameters:
+      allowedRightValues:
+        - "TYPO3\\CMS\\Frontend\\DataProcessing\\DatabaseQueryProcessor"
+  - class: DuplicateAssignment
+  - class: EmptySection
+  - class: NestingConsistency
+    parameters:
+      commonPathPrefixThreshold: 1
+
+filePatterns:
+  - "*.typoscript"
+  - "*.ts"
+  - "*.txt"

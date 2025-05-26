@@ -1,0 +1,17 @@
+# API endpoints using different typeNum values
+
+# Protected API endpoint (typeNum 101)
+api_protected = PAGE
+api_protected {
+  config {
+    disableAllHeaderCode = 1
+    additionalHeaders.10.header = Content-Type: application/json
+    xhtml_cleaning = 0
+  }
+
+  10 = EXTBASEPLUGIN
+  10 {
+    extensionName = TestApiExtension
+    pluginName = Testing
+  }
+}

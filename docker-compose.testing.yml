@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api-token-testing:
+    build:
+      context: .
+      dockerfile: Dockerfile.testing
+    volumes:
+      - .:/app
+      - /app/.Build/vendor  # Use container's vendor for performance
+    environment:
+      - TYPO3_CONTEXT=Testing
+      - TYPO3_PATH_ROOT=/app/.Build/public
+      - TYPO3_PATH_APP=/app/.Build
+    depends_on:
+      - database
+    working_dir: /app
+
+  database:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: typo3_testing
+      MYSQL_USER: typo3
+      MYSQL_PASSWORD: typo3
+    ports:
+      - "3306:3306"
+    volumes:
+      - database_data:/var/lib/mysql
+
+  # Service for running specific test commands
+  test-runner:
+    extends:
+      service: api-token-testing
+    command: ["tail", "-f", "/dev/null"]  # Keep container running
+
+volumes:
+  database_data:

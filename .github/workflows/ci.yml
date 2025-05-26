@@ -1,0 +1,175 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [8.3]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Lint composer.json
+        run: composer lint:composer
+
+      - name: Check EditorConfig
+        run: composer lint:editorconfig
+
+      - name: Lint PHP files
+        run: composer lint:php
+
+      - name: Lint TypoScript files
+        run: composer lint:typoscript
+
+      - name: Run PHPStan
+        run: composer sca:php
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [8.3]
+        typo3-version: ["^12.4", "^13.0"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
+          composer require cpsit/test-api-extension:@dev --no-update --dev
+          rm -f composer.lock
+          composer update --prefer-dist --no-progress
+
+      - name: Run unit tests with coverage
+        run: .Build/bin/phpunit -c Tests/Build/UnitTests.xml --coverage-clover=.Build/coverage/unit-clover.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: .Build/coverage/unit-clover.xml
+          flags: unit
+          name: unit-tests-php${{ matrix.php-version }}-typo3${{ matrix.typo3-version }}
+
+  functional-tests:
+    name: Functional Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-version: [8.3]
+        typo3-version: ["^12.4", "^13.0"]
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: db
+          MYSQL_USER: db
+          MYSQL_PASSWORD: db
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: xdebug
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
+          composer require cpsit/test-api-extension:@dev --no-update --dev
+          rm -f composer.lock
+          composer update --prefer-dist --no-progress
+
+      - name: Grant database permissions
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "GRANT ALL ON \`db_%\`.* TO \`db\`@\`%\`;"
+          mysql -h 127.0.0.1 -u root -proot -e "FLUSH PRIVILEGES;"
+
+      - name: Run functional tests with coverage
+        run: .Build/bin/phpunit -c Tests/Build/FunctionalTests.xml --coverage-clover=.Build/coverage/functional-clover.xml
+        env:
+          TYPO3_PATH_ROOT: ${{ github.workspace }}/.Build/web
+          TYPO3_PATH_APP: ${{ github.workspace }}/.Build
+          typo3DatabaseDriver: pdo_mysql
+          typo3DatabaseHost: 127.0.0.1
+          typo3DatabasePort: 3306
+          typo3DatabaseName: db
+          typo3DatabaseUsername: db
+          typo3DatabasePassword: db
+
+      - name: Upload coverage to Codecovh
+        uses: codecov/codecov-action@v3
+        with:
+          file: .Build/coverage/functional-clover.xml
+          flags: functional
+          name: functional-tests-php${{ matrix.php-version }}-typo3${{ matrix.typo3-version }}

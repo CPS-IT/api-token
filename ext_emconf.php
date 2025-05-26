@@ -1,4 +1,21 @@
 <?php
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
+ *
+ * For the full copyright and license information, please read the
+ * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Api Token',
     'description' => 'Generate and validate token auth for api requests.',
@@ -12,7 +29,7 @@ $EM_CONF[$_EXTKEY] = [
         [
             'depends' =>
                 [
-                    'typo3' => '10.4.21-10.4.99',
+                    'typo3' => '12.4.0-13.4.99',
                 ],
             'conflicts' =>
                 [
@@ -20,5 +37,5 @@ $EM_CONF[$_EXTKEY] = [
             'suggests' =>
                 [
                 ],
-        ]
+        ],
 ];
