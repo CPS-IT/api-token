@@ -1,15 +1,25 @@
 <?php
+
 declare(strict_types=1);
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
 
 namespace CPSIT\ApiToken\Domain\Repository;
 
-use DateTime;
 use CPSIT\ApiToken\Domain\Model\Token;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -19,19 +29,12 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 
 class TokenRepository implements TokenRepositoryInterface
 {
-    /**
-     * @var ?PersistenceManagerInterface
-     */
-    protected ?PersistenceManagerInterface $persistenceManager;
-
-    public function __construct(PersistenceManagerInterface $persistenceManager)
-    {
-        $this->persistenceManager = $persistenceManager;
-    }
+    public function __construct(protected ?PersistenceManagerInterface $persistenceManager) {}
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function findOneRecordByIdentifier(string $identifier): array
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -43,7 +46,7 @@ class TokenRepository implements TokenRepositoryInterface
                     $queryBuilder->createNamedParameter($identifier)
                 )
             )
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         return $result ?: [];
@@ -55,7 +58,7 @@ class TokenRepository implements TokenRepositoryInterface
         $result = $this->getQueryBuilder()
             ->select('crdate', 'valid_until', 'uid', 'name', 'identifier', 'description', 'hidden')
             ->from(self::TABLE_NAME)
-            ->execute();
+            ->executeQuery();
 
         while ($row = $result->fetchAssociative()) {
             // Do something with that single row
@@ -64,7 +67,7 @@ class TokenRepository implements TokenRepositoryInterface
 
         return array_map(
             static function ($tokenRecord) {
-                $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new DateTime('now'))->getTimestamp());
+                $tokenRecord['is_expired'] = ($tokenRecord['valid_until'] < (new \DateTime('now'))->getTimestamp());
                 $tokenRecord['is_hidden'] = $tokenRecord['hidden'] === 1;
                 return $tokenRecord;
             },

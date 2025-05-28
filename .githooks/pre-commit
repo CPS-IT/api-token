@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# Git pre-commit hook for api-token extension
+# Runs static analysis before allowing commits
+
+echo "Running pre-commit checks..."
+
+# Check if composer is available
+if ! command -v composer &> /dev/null; then
+    echo "Composer not found. Please install composer."
+    exit 1
+fi
+
+# Run PHP CS Fixer (check only)
+echo "Checking PHP code style..."
+if ! composer lint:php; then
+    echo "❌ PHP code style check failed."
+    echo "Run 'composer fix:php' to fix issues automatically."
+    exit 1
+fi
+
+# Run PHPStan
+echo "Running static analysis..."
+if ! composer sca:php; then
+    echo "❌ Static analysis failed."
+    echo "Please fix the reported issues."
+    exit 1
+fi
+
+# Check EditorConfig
+echo "Checking EditorConfig compliance..."
+if ! composer lint:editorconfig; then
+    echo "❌ EditorConfig check failed."
+    echo "Run 'composer fix:editorconfig' to fix issues."
+    exit 1
+fi
+
+# Check composer.json
+echo "Validating composer.json..."
+if ! composer lint:composer; then
+    echo "❌ composer.json validation failed."
+    exit 1
+fi
+
+echo "✅ All pre-commit checks passed!"
+exit 0

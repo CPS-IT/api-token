@@ -1,17 +1,27 @@
 <?php
+
 declare(strict_types=1);
-/**
- * This file is part of the api_token extension for TYPO3 CMS.
+
+/*
+ * This file is part of the api_token Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * README.md file that was distributed with this source code.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
  */
+
 namespace CPSIT\ApiToken\Service;
 
-use Exception;
 use CPSIT\ApiToken\Crypto\Random;
 use CPSIT\ApiToken\Crypto\RandomInterface;
-use Ramsey\Uuid\Rfc4122\UuidV4;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -41,21 +51,32 @@ class TokenService implements TokenServiceInterface
      *
      * @return string
      */
+    #[\Override]
     public function generateSecret(): string
     {
-        $uuid = UuidV4::fromBytes(
-            $this->random->generateRandomBytes(16)
-        );
+        $randomBytes = $this->random->generateRandomBytes(16);
 
-        return $uuid->toString();
+        // Set version (4) and variant bits for UUID v4
+        $randomBytes[6] = chr(ord($randomBytes[6]) & 0x0f | 0x40); // Version 4
+        $randomBytes[8] = chr(ord($randomBytes[8]) & 0x3f | 0x80); // Variant bits
+
+        return sprintf(
+            '%08s-%04s-%04s-%04s-%12s',
+            bin2hex(substr((string)$randomBytes, 0, 4)),
+            bin2hex(substr((string)$randomBytes, 4, 2)),
+            bin2hex(substr((string)$randomBytes, 6, 2)),
+            bin2hex(substr((string)$randomBytes, 8, 2)),
+            bin2hex(substr((string)$randomBytes, 10, 6))
+        );
     }
 
     /**
      * @param int $lenght
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
-    public function generateIdentifier(int $lenght = 13)
+    #[\Override]
+    public function generateIdentifier(int $lenght = 13): string
     {
         return $this->random->generateRandomHexString($lenght);
     }
@@ -65,9 +86,10 @@ class TokenService implements TokenServiceInterface
      * for the secret
      *
      * @param string $secret
-     * @return mixed
+     * @return string
      */
-    public function hash(string $secret)
+    #[\Override]
+    public function hash(string $secret): string
     {
         return $this->hashInstance->getHashedPassword($secret);
     }
@@ -80,7 +102,8 @@ class TokenService implements TokenServiceInterface
      * @param string $saltedHash The salted hash to check agains
      * @return bool
      */
-    public function check(string $secret, $saltedHash): bool
+    #[\Override]
+    public function check(string $secret, string $saltedHash): bool
     {
         return $this->hashInstance->checkPassword($secret, $saltedHash);
     }
