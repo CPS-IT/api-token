@@ -70,7 +70,7 @@ final class TokenController extends ActionController
      * @param Token|null $newToken
      * @throws \Exception
      */
-    public function newAction(Token $newToken = null): ResponseInterface
+    public function newAction(?Token $newToken = null): ResponseInterface
     {
         $newToken ??= new Token();
         $secret = $this->tokenService->generateSecret();

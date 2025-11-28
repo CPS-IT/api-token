@@ -55,7 +55,7 @@ class ApiKeyAuthenticator implements MiddlewareInterface
      * @param ApiKeyAuthentication|null $authentication
      * @param ResolvedRouteValidator|null $routeValidator
      */
-    public function __construct(Context $context = null, ApiKeyAuthentication $authentication = null, ResolvedRouteValidator $routeValidator = null)
+    public function __construct(?Context $context = null, ?ApiKeyAuthentication $authentication = null, ?ResolvedRouteValidator $routeValidator = null)
     {
         $this->context = $context ?? GeneralUtility::makeInstance(Context::class);
         $this->authentication = $authentication ?? GeneralUtility::makeInstance(ApiKeyAuthentication::class);

@@ -64,7 +64,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      */
     protected $validUntil;
 
-    public function __construct(TokenServiceInterface $tokenService = null, TokenRepository $repository = null)
+    public function __construct(?TokenServiceInterface $tokenService = null, ?TokenRepository $repository = null)
     {
         $this->tokenService = $tokenService ?? GeneralUtility::makeInstance(TokenService::class);
         $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);

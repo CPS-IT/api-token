@@ -42,7 +42,7 @@ class AuthenticatedValidator implements RequestValidatorInterface
         AuthenticatedAspect::ASPECT_NAME => AuthenticatedAspect::AUTHENTICATED,
     ];
 
-    public function __construct(Context $context = null)
+    public function __construct(?Context $context = null)
     {
         $this->context = $context ?? GeneralUtility::makeInstance(Context::class);
     }

@@ -80,7 +80,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $name
      * @param TokenService|null $tokenService
      */
-    public function __construct(string $name = null, TokenBuildService $tokenBuildService = null, TokenService $tokenService = null, TokenRepository $repository = null)
+    public function __construct(?string $name = null, ?TokenBuildService $tokenBuildService = null, ?TokenService $tokenService = null, ?TokenRepository $repository = null)
     {
         parent::__construct($name);
 
@@ -189,7 +189,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $name
      * @return string|null
      */
-    protected function processName(string $name = null): ?string
+    protected function processName(?string $name = null): ?string
     {
         if ($name === null) {
             $question = new Question('Please enter the token name');
@@ -211,7 +211,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $description
      * @return string
      */
-    protected function processDescription(string $description = null): string
+    protected function processDescription(?string $description = null): string
     {
         if ($description === null) {
             $question = new Question('Please enter a description for the token', '');

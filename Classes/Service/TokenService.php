@@ -38,7 +38,7 @@ class TokenService implements TokenServiceInterface
      */
     protected $hashInstance;
 
-    public function __construct(RandomInterface $random = null, PasswordHashInterface $hashInstance = null)
+    public function __construct(?RandomInterface $random = null, ?PasswordHashInterface $hashInstance = null)
     {
         $this->random = $random ?? GeneralUtility::makeInstance(Random::class);
         $this->hashInstance = $hashInstance ?? GeneralUtility::makeInstance(PasswordHashFactory::class)
