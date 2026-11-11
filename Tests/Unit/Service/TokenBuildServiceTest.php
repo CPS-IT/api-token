@@ -67,4 +67,42 @@ class TokenBuildServiceTest extends UnitTestCase
         // Allow for small time differences (within 1 minute)
         self::assertLessThan(60, abs($validUntil->getTimestamp() - $oneYearFromNow->getTimestamp()));
     }
+
+    #[Test]
+    public function buildInitialTokenUsesGivenValidUntil(): void
+    {
+        $validUntil = new \DateTime('+2 weeks');
+
+        $token = $this->subject->buildInitialToken('name', 'desc', 'id', 'hash', $validUntil);
+
+        self::assertSame($validUntil, $token->getValidUntil());
+    }
+
+    #[Test]
+    public function parseValidUntilAcceptsRelativeAndAbsoluteDates(): void
+    {
+        $inSixMonths = $this->subject->parseValidUntil('+6 months');
+        self::assertLessThan(60, abs($inSixMonths->getTimestamp() - (new \DateTime('+6 months'))->getTimestamp()));
+
+        $nextYear = (int)date('Y') + 1;
+        self::assertSame($nextYear . '-12-31', $this->subject->parseValidUntil($nextYear . '-12-31')->format('Y-m-d'));
+    }
+
+    #[Test]
+    public function parseValidUntilRejectsInvalidInput(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1762850001);
+
+        $this->subject->parseValidUntil('invalid-date');
+    }
+
+    #[Test]
+    public function parseValidUntilRejectsDatesInThePast(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionCode(1762850002);
+
+        $this->subject->parseValidUntil('-1 day');
+    }
 }

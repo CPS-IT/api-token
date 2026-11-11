@@ -52,14 +52,26 @@ class ApiController
 ```
 
 #### Via Backend Module
-1. Navigate to **System** > **API Token Management**
-2. Click **Create New Token**
+1. Navigate to **System** > **API Token** (admins only)
+2. Click **Generate new token**
 3. Fill in the form:
    - **Name**: Descriptive name for identification
    - **Description**: Detailed description of token usage
-   - **Valid Until**: Expiration date (default: 1 year)
-4. Click **Save**
-5. **Important**: Copy the secret immediately - it won't be shown again!
+4. Click **Submit**
+5. **Important**: Copy identifier and secret immediately - the secret won't be shown again!
+
+Tokens created in the backend are valid for one year; edit the record to
+change `valid until`. See [Backend Module](BackendModule.md).
+
+### Revoking Tokens
+
+A token stops authenticating immediately when it is
+
+- **disabled** (the "Visible" toggle in the record, stored as `hidden = 1`),
+- **deleted** (delete button in the backend module), or
+- **expired** (`valid until` in the past).
+
+If a secret may have leaked, revoke the token first, then hand out a new one.
 
 ### Token Information
 
@@ -76,14 +88,13 @@ When a token is created, you receive:
 ```php
 use CPSIT\ApiToken\Request\Validation\ApiTokenAuthenticator;
 
-// Simple authentication check
+// Simple authentication check (403 response on failure)
 if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
     return ApiTokenAuthenticator::returnErrorResponse();
 }
 
 // Check with custom error handling
-$authenticator = new ApiTokenAuthenticator();
-if (!$authenticator->isAuthenticated($request)) {
+if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
     return new JsonResponse([
         'error' => 'Authentication required',
         'code' => 401
@@ -91,23 +102,23 @@ if (!$authenticator->isAuthenticated($request)) {
 }
 ```
 
-### Method 2: Using the Middleware
+`isNotAuthenticated()` reads the result the extension's middleware stored
+for the current request. It only works for requests that went through the
+TYPO3 frontend with a resolved page (e.g. a plugin or page type), not in
+middlewares that run before page resolution.
 
-The extension provides PSR-15 middleware for automatic authentication:
+**Backend users**: by default a logged-in backend user does **not** pass
+this check without a token. Earlier versions always accepted backend users;
+to keep that behaviour, enable `allowBackendUserAuthentication` - see
+[Configuration](Configuration.md).
 
-```php
-// In your middleware configuration
-return [
-    'frontend' => [
-        'my-api-auth' => [
-            'target' => \CPSIT\ApiToken\Middleware\ApiKeyAuthenticator::class,
-            'before' => [
-                'your-api-handler'
-            ]
-        ]
-    ]
-];
-```
+### Method 2: The Middleware
+
+The extension registers `ApiKeyAuthenticator` as a frontend middleware
+automatically - do not register it again. It runs on every frontend
+request with a resolved page, evaluates the two headers and stores the
+result in the `RestApiAuthenticated` context aspect. It never rejects a
+request on its own; your endpoint decides (Method 1).
 
 ### Method 3: Manual Authentication
 
@@ -121,23 +132,21 @@ use CPSIT\ApiToken\Configuration\RestApiInterface;
 $identifier = $request->getHeaderLine(RestApiInterface::HEADER_NAME_IDENTIFIER);
 $authorization = $request->getHeaderLine('application-authorization');
 
-// Create authentication instance
+// Create authentication instance (or call ->forNewRequest() on an injected one)
 $auth = new ApiKeyAuthentication($tokenService, $tokenRepository);
 $auth->withIdentifier($identifier);
 
-// Authenticate
+// Authenticate: checks secret, expiry, disabled and deleted state
 $authenticatedAuth = $auth->fromHeader($authorization);
 
 if (!$authenticatedAuth->isAuthenticated()) {
     // Handle authentication failure
     return new JsonResponse(['error' => 'Invalid credentials'], 401);
 }
-
-// Check if token is still valid
-if ($authenticatedAuth->validUntil() < new \DateTimeImmutable()) {
-    return new JsonResponse(['error' => 'Token expired'], 401);
-}
 ```
+
+This works in your own middleware too, e.g. before page resolution, where
+Method 1 is not available.
 
 ## HTTP Headers
 
@@ -181,30 +190,17 @@ When authentication succeeds, your endpoint receives the normal request and can 
 
 ### Authentication Failures
 
-#### Missing Headers
-```json
-{
-    "error": "Authentication required",
-    "message": "Missing authentication headers",
-    "code": 401
-}
-```
+`ApiTokenAuthenticator::returnErrorResponse()` returns the same response for
+every failure (missing headers, unknown identifier, wrong secret, expired,
+disabled or deleted token), so a client cannot probe which check failed:
 
-#### Invalid Credentials
-```json
-{
-    "error": "Authentication failed",
-    "message": "Invalid identifier or secret",
-    "code": 401
-}
-```
+```http
+HTTP/1.1 403 Access to requested resource is forbidden.
+Content-Type: application/json
 
-#### Expired Token
-```json
 {
-    "error": "Token expired",
-    "message": "The provided token has expired",
-    "code": 401
+    "message": "Access to requested resource is forbidden.",
+    "code": 403
 }
 ```
 
@@ -224,22 +220,29 @@ class CustomAuthService
 
     public function validateTokenWithCustomRules(string $identifier, string $secret): bool
     {
-        // Get token from database
+        // Get token from database (never returns deleted or disabled tokens)
         $tokenData = $this->tokenRepository->findOneRecordByIdentifier($identifier);
 
         if (empty($tokenData)) {
             return false;
         }
 
-        // Check secret
-        if (!$this->tokenService->check($secret, $tokenData['hash'])) {
+        // Expiry is NOT filtered by the repository - always check it.
+        // valid_until = 0 means expired.
+        if ((int)$tokenData['valid_until'] <= time()) {
             return false;
         }
 
-        // Custom validation rules
-        $validUntil = new \DateTimeImmutable('@' . $tokenData['valid_until']);
-        if ($validUntil < new \DateTimeImmutable()) {
+        // Check secret
+        if (!$this->tokenService->check($secret, (string)$tokenData['hash'])) {
             return false;
+        }
+
+        // Replace a slow hash of the previous format (argon2/bcrypt) once
+        // the secret is known to be right - otherwise every request pays for it.
+        // ApiKeyAuthentication does this for you.
+        if ($this->tokenService->needsRehash((string)$tokenData['hash'])) {
+            $this->tokenRepository->updateHash((int)$tokenData['uid'], $this->tokenService->hash($secret));
         }
 
         // Additional custom checks
@@ -345,10 +348,12 @@ curl -X POST "http://localhost/api/test" \
 
 1. **Secure Token Storage**: Never log or expose tokens in client-side code
 2. **Token Rotation**: Regularly rotate tokens for enhanced security
-3. **Scope Limitation**: Use different tokens for different API endpoints
-4. **Monitoring**: Log authentication attempts for security monitoring
-5. **Expiration**: Set appropriate expiration dates for tokens
-6. **Rate Limiting**: Implement rate limiting on top of token authentication
+3. **Revocation**: Disable or delete a token as soon as it may have leaked
+4. **No Built-in Scopes**: Every valid token passes every endpoint that uses
+   `ApiTokenAuthenticator`; implement scoping yourself if endpoints need different access
+5. **Monitoring**: Log authentication attempts for security monitoring
+6. **Expiration**: Set appropriate expiration dates for tokens
+7. **Rate Limiting**: Implement rate limiting on top of token authentication
 
 ## Next Steps
 

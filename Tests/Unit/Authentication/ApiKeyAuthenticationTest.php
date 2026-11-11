@@ -24,11 +24,13 @@ use CPSIT\ApiToken\Authentication\ApiKeyAuthentication;
 use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Service\TokenService;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashInterface;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 #[CoversClass(ApiKeyAuthentication::class)]
@@ -259,5 +261,149 @@ class ApiKeyAuthenticationTest extends UnitTestCase
         $authentication = $this->subject->fromHeader($validSecret);
 
         self::assertFalse($authentication->isAuthenticated());
+    }
+
+    /**
+     * @return array<string, array{array<string, int>}>
+     */
+    public static function revokedRecordDataProvider(): array
+    {
+        return [
+            'hidden' => [['hidden' => 1]],
+            'deleted' => [['deleted' => 1]],
+        ];
+    }
+
+    /**
+     * Defense in depth: even if a (replaced) repository returns a revoked
+     * record, it must not authenticate.
+     *
+     * @param array<string, int> $revokedFlags
+     */
+    #[Test]
+    #[DataProvider('revokedRecordDataProvider')]
+    public function fromHeaderRejectsRevokedRecordsEvenWithCorrectSecret(array $revokedFlags): void
+    {
+        $this->tokenRepository->method('findOneRecordByIdentifier')
+            ->willReturn(self::validRecord($revokedFlags));
+        $this->tokenService->method('check')->willReturn(true);
+
+        $this->subject->withIdentifier('baz');
+
+        self::assertFalse($this->subject->fromHeader('foo')->isAuthenticated());
+    }
+
+    #[Test]
+    public function fromHeaderDoesNotKeepAnEarlierPositiveResult(): void
+    {
+        $this->tokenRepository->method('findOneRecordByIdentifier')->willReturn(self::validRecord());
+        $this->tokenService->method('check')->willReturnOnConsecutiveCalls(true, false);
+
+        $this->subject->withIdentifier('baz');
+        self::assertTrue($this->subject->fromHeader('foo')->isAuthenticated());
+        self::assertFalse($this->subject->fromHeader('wrong')->isAuthenticated());
+        self::assertFalse($this->subject->fromHeader('')->isAuthenticated());
+    }
+
+    #[Test]
+    public function forNewRequestReturnsUnauthenticatedCopyAndKeepsOriginal(): void
+    {
+        $this->tokenRepository->method('findOneRecordByIdentifier')->willReturn(self::validRecord());
+        $this->tokenService->method('check')->willReturn(true);
+        $this->subject->withMethod(RestApiInterface::METHOD_POST)->withIdentifier('baz')->fromHeader('foo');
+
+        $fresh = $this->subject->forNewRequest();
+
+        self::assertNotSame($this->subject, $fresh);
+        self::assertFalse($fresh->isAuthenticated());
+        self::assertSame(RestApiInterface::METHOD_GET, $fresh->getMethod());
+        // a fresh copy has no identifier, so even a valid secret fails
+        self::assertFalse($fresh->fromHeader('foo')->isAuthenticated());
+        self::assertTrue($this->subject->isAuthenticated());
+    }
+
+    #[Test]
+    public function legacyHashIsUpgradedAfterSuccessfulCheck(): void
+    {
+        $legacyHasher = $this->createMock(PasswordHashInterface::class);
+        $legacyHasher->method('checkPassword')->willReturn(true);
+        $tokenService = new TokenService(null, $legacyHasher);
+        $repository = $this->createRepositoryMock(self::validRecord(['hash' => '$argon2id$v=19$legacy']));
+        $repository->expects(self::once())
+            ->method('updateHash')
+            ->with(1, TokenService::HASH_PREFIX . hash('sha256', 'foo'));
+
+        $subject = new ApiKeyAuthentication($tokenService, $repository);
+
+        self::assertTrue($subject->withIdentifier('baz')->fromHeader('foo')->isAuthenticated());
+    }
+
+    #[Test]
+    public function hashIsNotUpgradedWhenCheckFails(): void
+    {
+        $legacyHasher = $this->createMock(PasswordHashInterface::class);
+        $legacyHasher->method('checkPassword')->willReturn(false);
+        $repository = $this->createRepositoryMock(self::validRecord(['hash' => '$argon2id$v=19$legacy']));
+        $repository->expects(self::never())->method('updateHash');
+
+        $subject = new ApiKeyAuthentication(new TokenService(null, $legacyHasher), $repository);
+
+        self::assertFalse($subject->withIdentifier('baz')->fromHeader('foo')->isAuthenticated());
+    }
+
+    #[Test]
+    public function currentHashIsNotRewritten(): void
+    {
+        $tokenService = new TokenService(null, $this->createMock(PasswordHashInterface::class));
+        $repository = $this->createRepositoryMock(self::validRecord(['hash' => $tokenService->hash('foo')]));
+        $repository->expects(self::never())->method('updateHash');
+
+        $subject = new ApiKeyAuthentication($tokenService, $repository);
+
+        self::assertTrue($subject->withIdentifier('baz')->fromHeader('foo')->isAuthenticated());
+    }
+
+    #[Test]
+    public function failingHashUpgradeDoesNotFailAuthentication(): void
+    {
+        $legacyHasher = $this->createMock(PasswordHashInterface::class);
+        $legacyHasher->method('checkPassword')->willReturn(true);
+        $repository = $this->createRepositoryMock(self::validRecord(['hash' => '$argon2id$v=19$legacy']));
+        $repository->method('updateHash')->willThrowException(new \RuntimeException('db down'));
+
+        $subject = new ApiKeyAuthentication(new TokenService(null, $legacyHasher), $repository);
+
+        self::assertTrue($subject->withIdentifier('baz')->fromHeader('foo')->isAuthenticated());
+    }
+
+    /**
+     * @param array<string, mixed> $record
+     */
+    private function createRepositoryMock(array $record): TokenRepository|MockObject
+    {
+        $repository = $this->getMockBuilder(TokenRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['findOneRecordByIdentifier', 'updateHash'])
+            ->getMock();
+        $repository->method('findOneRecordByIdentifier')->willReturn($record);
+
+        return $repository;
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
+    private static function validRecord(array $overrides = []): array
+    {
+        return array_replace([
+            'uid' => 1,
+            'name' => 'bar',
+            'identifier' => 'baz',
+            'hash' => 'bar',
+            'valid_until' => time() + 86400,
+            'hidden' => 0,
+            'deleted' => 0,
+        ], $overrides);
     }
 }

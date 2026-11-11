@@ -57,7 +57,7 @@
                         <td class="col-title col-responsive nowrap">
                             <be:link.editRecord uid="{record.uid}" table="{tableName}">
                                <f:if condition="{record.is_hidden}">
-                                   <f:then>{f:translate(key: 'module.token.state.active', extensionName: 'ApiToken')}</f:then>
+                                   <f:then>{f:translate(key: 'module.token.state.disabled', extensionName: 'ApiToken')}</f:then>
                                    <f:else>
                                        <f:if condition="{record.is_expired}">
                                            <f:then>{f:translate(key: 'module.token.state.invalid', extensionName: 'ApiToken')}</f:then>
@@ -76,6 +76,18 @@
                             <div class="btn-group" role="group">
                                 <f:render partial="Backend/Link/EditRecord" arguments="{record: record, tableName: tableName, route: route}" />
                             </div>
+                            <f:form action="delete" arguments="{tokenUid: record.uid}" method="post" class="d-inline-block">
+                                <button type="submit"
+                                        class="btn btn-default t3js-modal-trigger"
+                                        title="{f:translate(key: 'button.delete', extensionName: 'ApiToken')}"
+                                        data-severity="warning"
+                                        data-title="{f:translate(key: 'module.token.delete.confirm.title', extensionName: 'ApiToken')} {record.name}"
+                                        data-bs-content="{f:translate(key: 'module.token.delete.confirm.body', extensionName: 'ApiToken')}"
+                                        data-button-close-text="{f:translate(key: 'button.cancel', extensionName: 'ApiToken')}"
+                                        data-button-ok-text="{f:translate(key: 'button.delete', extensionName: 'ApiToken')}">
+                                    <c:icon identifier="actions-edit-delete" />
+                                </button>
+                            </f:form>
                         </td>
                     </tr>
                 </f:for>

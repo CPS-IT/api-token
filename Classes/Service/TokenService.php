@@ -22,27 +22,42 @@ namespace CPSIT\ApiToken\Service;
 
 use CPSIT\ApiToken\Crypto\Random;
 use CPSIT\ApiToken\Crypto\RandomInterface;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class TokenService implements TokenServiceInterface
+/**
+ * Secrets are 122 bit random values (UUID v4), not user chosen passwords.
+ * A slow password hash (argon2, bcrypt) adds nothing against brute force
+ * at that entropy, but makes every verification expensive. Secrets are
+ * therefore stored as a plain SHA-256 digest ("sha256:<hex>").
+ *
+ * Hashes in the previous format (TYPO3 password hashes) are still
+ * verified; needsRehash() reports them so callers can upgrade them after
+ * a successful verification.
+ */
+class TokenService implements TokenServiceInterface, HashUpgradeAwareInterface
 {
+    public const HASH_PREFIX = 'sha256:';
+
     /**
-     * @var
+     * @var RandomInterface
      */
     protected $random;
 
     /**
-     * @var PasswordHashInterface
+     * Only used to verify legacy hashes. When null, the matching TYPO3
+     * password hash implementation is resolved from the hash itself.
+     *
+     * @var PasswordHashInterface|null
      */
     protected $hashInstance;
 
     public function __construct(?RandomInterface $random = null, ?PasswordHashInterface $hashInstance = null)
     {
         $this->random = $random ?? GeneralUtility::makeInstance(Random::class);
-        $this->hashInstance = $hashInstance ?? GeneralUtility::makeInstance(PasswordHashFactory::class)
-                ->getDefaultHashInstance('BE');
+        $this->hashInstance = $hashInstance;
     }
 
     /**
@@ -82,8 +97,7 @@ class TokenService implements TokenServiceInterface
     }
 
     /**
-     * Returns a salted hashed key
-     * for the secret
+     * Returns the storable hash of a secret ("sha256:<hex>")
      *
      * @param string $secret
      * @return string
@@ -91,20 +105,49 @@ class TokenService implements TokenServiceInterface
     #[\Override]
     public function hash(string $secret): string
     {
-        return $this->hashInstance->getHashedPassword($secret);
+        return self::HASH_PREFIX . hash('sha256', $secret);
     }
 
     /**
-     * Tells if the plain text secret is correct by comparing it
-     * with the salted hash
+     * Tells if the plain text secret matches the stored hash.
+     * Accepts current (sha256) and legacy (TYPO3 password hash) formats.
      *
      * @param string $secret The plain text secret to check for
-     * @param string $saltedHash The salted hash to check agains
+     * @param string $saltedHash The stored hash to check against
      * @return bool
      */
     #[\Override]
     public function check(string $secret, string $saltedHash): bool
     {
-        return $this->hashInstance->checkPassword($secret, $saltedHash);
+        if ($secret === '' || $saltedHash === '') {
+            return false;
+        }
+
+        if (str_starts_with($saltedHash, self::HASH_PREFIX)) {
+            return hash_equals($saltedHash, $this->hash($secret));
+        }
+
+        return $this->checkLegacyHash($secret, $saltedHash);
+    }
+
+    #[\Override]
+    public function needsRehash(string $hash): bool
+    {
+        return !str_starts_with($hash, self::HASH_PREFIX);
+    }
+
+    protected function checkLegacyHash(string $secret, string $legacyHash): bool
+    {
+        if ($this->hashInstance instanceof PasswordHashInterface) {
+            return $this->hashInstance->checkPassword($secret, $legacyHash);
+        }
+
+        try {
+            return GeneralUtility::makeInstance(PasswordHashFactory::class)
+                ->get($legacyHash, 'BE')
+                ->checkPassword($secret, $legacyHash);
+        } catch (InvalidPasswordHashException) {
+            return false;
+        }
     }
 }
