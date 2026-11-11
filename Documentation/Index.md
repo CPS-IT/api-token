@@ -13,9 +13,7 @@ The TYPO3 API Token extension provides secure API authentication for TYPO3 CMS a
 7. [Backend Module](BackendModule.md)
 8. [Development](Development.md)
 9. [Testing](Testing.md)
-10. [Troubleshooting](Troubleshooting.md)
-11. [Migration Guide](Migration.md)
-12. [Changelog](Changelog.md)
+10. [Changelog](Changelog.md)
 
 ## Quick Start
 
@@ -42,7 +40,7 @@ The TYPO3 API Token extension provides secure API authentication for TYPO3 CMS a
 
 ## Version Information
 
-- **Current Version**: 1.0.0
+- **Current Version**: 1.1.0
 - **TYPO3 Compatibility**: 12.4+ and 13.0+
 - **PHP Compatibility**: 8.1+
 

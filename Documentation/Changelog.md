@@ -5,6 +5,24 @@ All notable changes to the API Token extension will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-11
+
+### Added
+- Delete action in the backend token module
+- `--expires` option for `apitoken:generate`
+- Extension setting `allowBackendUserAuthentication`
+
+### Changed
+- New token hash format; existing tokens are migrated automatically on first use.
+  Downgrading to 1.0.x is not supported.
+- Token validation evaluates all states of the token record
+- Backend users only pass `ApiTokenAuthenticator` when `allowBackendUserAuthentication` is enabled
+- Backend module generates identifier and secret on the server
+
+### Fixed
+- Middleware handling of unsupported HTTP methods
+- Backend list labels, TCA and documentation
+
 ## [Unreleased]
 
 ### Added
@@ -191,7 +209,7 @@ No security vulnerabilities have been reported for this extension.
 
 ## Future Plans
 
-### Planned for 1.1.0
+### Planned
 - Rate limiting functionality
 - Token scoping and permissions
 - Audit logging for authentication attempts
