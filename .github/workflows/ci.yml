@@ -58,6 +58,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php-version: [8.3]
         typo3-version: ["^12.4", "^13.0"]
@@ -88,6 +89,13 @@ jobs:
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
           composer require cpsit/test-api-extension:@dev --no-update --dev
+          if [ "${{ matrix.typo3-version }}" = "^12.4" ]; then
+            # TYPO3 12.4 is ELTS-only: every public 12.4 release has security
+            # advisories. Allow them for this test install only, so v12
+            # compatibility keeps being tested.
+            composer remove --dev roave/security-advisories --no-update
+            composer config --json policy.advisories.block false
+          fi
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
@@ -105,6 +113,7 @@ jobs:
     name: Functional Tests
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php-version: [8.3]
         typo3-version: ["^12.4", "^13.0"]
@@ -147,6 +156,13 @@ jobs:
         run: |
           composer require typo3/cms-core:"${{ matrix.typo3-version }}" --no-update
           composer require cpsit/test-api-extension:@dev --no-update --dev
+          if [ "${{ matrix.typo3-version }}" = "^12.4" ]; then
+            # TYPO3 12.4 is ELTS-only: every public 12.4 release has security
+            # advisories. Allow them for this test install only, so v12
+            # compatibility keeps being tested.
+            composer remove --dev roave/security-advisories --no-update
+            composer config --json policy.advisories.block false
+          fi
           rm -f composer.lock
           composer update --prefer-dist --no-progress
 
