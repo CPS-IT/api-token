@@ -23,6 +23,7 @@ namespace CPSIT\ApiToken\Authentication;
 use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Domain\Repository\TokenRepository;
 use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
+use CPSIT\ApiToken\Service\HashUpgradeAwareInterface;
 use CPSIT\ApiToken\Service\TokenService;
 use CPSIT\ApiToken\Service\TokenServiceInterface;
 use CPSIT\ApiToken\Traits\TokenRepositoryTrait;
@@ -64,7 +65,7 @@ class ApiKeyAuthentication implements HeaderAwareInterface
      */
     protected $validUntil;
 
-    public function __construct(TokenServiceInterface $tokenService = null, TokenRepository $repository = null)
+    public function __construct(?TokenServiceInterface $tokenService = null, ?TokenRepository $repository = null)
     {
         $this->tokenService = $tokenService ?? GeneralUtility::makeInstance(TokenService::class);
         $this->repository = $repository ?? GeneralUtility::makeInstance(TokenRepository::class);
@@ -100,10 +101,29 @@ class ApiKeyAuthentication implements HeaderAwareInterface
 
     public function withIdentifier(string $identifier): self
     {
+        $this->authenticated = false;
+        $this->validUntil = null;
         $this->identifier = $identifier;
-        $this->token = $this->repository->findOneRecordByIdentifier($this->identifier);
+        $this->token = $identifier !== '' ? $this->repository->findOneRecordByIdentifier($identifier) : [];
 
         return $this;
+    }
+
+    /**
+     * Returns a copy without any per-request state (identifier, token,
+     * result, method). Use it when the instance is a shared service,
+     * so a previous request's result can never leak into the next one.
+     */
+    public function forNewRequest(): self
+    {
+        $clone = clone $this;
+        $clone->authenticated = null;
+        $clone->identifier = '';
+        $clone->token = [];
+        $clone->validUntil = null;
+        $clone->method = RestApiInterface::METHOD_GET;
+
+        return $clone;
     }
 
     /**
@@ -132,37 +152,64 @@ class ApiKeyAuthentication implements HeaderAwareInterface
     #[\Override]
     public function fromHeader(string $secret, string $name = self::HEADER_NAME_AUTHORIZATION): HeaderAwareInterface
     {
+        // never let an earlier result survive a new check
+        $this->authenticated = false;
+        $this->validUntil = null;
 
-        if (empty($secret) ||
-            empty($this->identifier) ||
-            !$this->validateHeaderName($name)) {
-            goto onFailure;
-        }
-
-        if (!empty($this->token)) {
-
-            $timeZone = new \DateTimeZone(date_default_timezone_get());
-            $now = new \DateTimeImmutable('now', $timeZone);
-            $this->validUntil = (clone $now)->setTimestamp((int)$this->token['valid_until']);
-
-            if (
-                $this->validUntil <  $now ||
-                empty($this->token['hash'])
-            ) {
-                goto onFailure;
-            }
-
-            $this->authenticated = $this->tokenService->check($secret, $this->token['hash']);
-
+        if (
+            empty($secret)
+            || empty($this->identifier)
+            || !$this->validateHeaderName($name)
+            || empty($this->token)
+        ) {
             return $this;
         }
 
-        // return default (invalid) instance
-        onFailure: {
-            $this->authenticated = false;
+        $timeZone = new \DateTimeZone(date_default_timezone_get());
+        $now = new \DateTimeImmutable('now', $timeZone);
+        $this->validUntil = $now->setTimestamp((int)($this->token['valid_until'] ?? 0));
+
+        // hidden/deleted are already excluded by the repository; checked again
+        // so a replaced or extended repository cannot reintroduce revoked tokens
+        if (
+            $this->validUntil < $now
+            || !empty($this->token['hidden'])
+            || !empty($this->token['deleted'])
+            || empty($this->token['hash'])
+        ) {
+            return $this;
+        }
+
+        $this->authenticated = $this->tokenService->check($secret, (string)$this->token['hash']);
+
+        if ($this->authenticated) {
+            $this->upgradeHash($secret);
         }
 
         return $this;
     }
 
+    /**
+     * Replaces a legacy (slow) hash with the current format after the secret
+     * was verified, so the expensive verification happens at most once.
+     */
+    protected function upgradeHash(string $secret): void
+    {
+        if (
+            !$this->tokenService instanceof HashUpgradeAwareInterface
+            || empty($this->token['uid'])
+            || !$this->tokenService->needsRehash((string)$this->token['hash'])
+        ) {
+            return;
+        }
+
+        try {
+            $newHash = $this->tokenService->hash($secret);
+            $this->repository->updateHash((int)$this->token['uid'], $newHash);
+            $this->token['hash'] = $newHash;
+        } catch (\Throwable) {
+            // The upgrade is an optimisation: a failed write must not fail an
+            // authenticated request. It is retried on the next successful use.
+        }
+    }
 }

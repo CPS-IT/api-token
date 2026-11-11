@@ -1,0 +1,38 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:c="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module"/>
+
+<f:section name="main">
+    <h1>{f:translate(key: 'module.tokenCreated.header', default: 'API token created')}: {name}</h1>
+
+    <f:be.infobox title="{f:translate(key: 'header.saveIdentifierAndSecret')}" state="1">
+        {f:translate(key: 'message.saveIdentifierAndSecretNow')}
+    </f:be.infobox>
+
+    <div class="card-container">
+        <div class="card card-success card-size-medium">
+            <div class="card-header"><h3>{f:translate(key: 'label.identifier')}</h3></div>
+            <div class="card-body"><code id="tx-apitoken-created-identifier">{identifier}</code></div>
+        </div>
+        <div class="card card-success card-size-medium">
+            <div class="card-header"><h3>{f:translate(key: 'label.secret')}</h3></div>
+            <div class="card-body"><code id="tx-apitoken-created-secret">{secret}</code></div>
+        </div>
+        <div class="card card-size-medium">
+            <div class="card-header"><h3>{f:translate(key: 'label.valid_until')}</h3></div>
+            <div class="card-body"><f:format.date format="Y-m-d H:i">{validUntil}</f:format.date></div>
+        </div>
+    </div>
+</f:section>
+
+<f:comment><!-- Header buttons --></f:comment>
+<f:section name="headerButtonsLeft">
+    <f:link.action action="list" class="btn btn-default btn-sm">
+        {c:icon(identifier: 'actions-close')}
+        {f:translate(key: 'button.backToList')}
+    </f:link.action>
+</f:section>
+
+</html>

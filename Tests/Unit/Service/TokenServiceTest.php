@@ -97,20 +97,44 @@ class TokenServiceTest extends UnitTestCase
     }
 
     #[Test]
-    public function hashUsesPasswordHasher(): void
+    public function hashReturnsPrefixedSha256AndDoesNotUsePasswordHasher(): void
     {
-        $plainTextSecret = 'mySecret123';
-        $expectedHash = '$2y$10$abcdefghijklmnopqrstuvwxyz123456789';
+        $this->passwordHasherMock->expects(self::never())->method('getHashedPassword');
 
-        $this->passwordHasherMock
-            ->expects(self::once())
-            ->method('getHashedPassword')
-            ->with($plainTextSecret)
-            ->willReturn($expectedHash);
+        $result = $this->subject->hash('mySecret123');
 
-        $result = $this->subject->hash($plainTextSecret);
+        self::assertSame(TokenService::HASH_PREFIX . hash('sha256', 'mySecret123'), $result);
+    }
 
-        self::assertSame($expectedHash, $result);
+    #[Test]
+    public function checkAcceptsMatchingSha256HashWithoutPasswordHasher(): void
+    {
+        $this->passwordHasherMock->expects(self::never())->method('checkPassword');
+
+        self::assertTrue($this->subject->check('mySecret123', $this->subject->hash('mySecret123')));
+    }
+
+    #[Test]
+    public function checkRejectsWrongSecretForSha256Hash(): void
+    {
+        self::assertFalse($this->subject->check('wrong', $this->subject->hash('mySecret123')));
+    }
+
+    #[Test]
+    public function checkRejectsEmptySecretOrHash(): void
+    {
+        $this->passwordHasherMock->expects(self::never())->method('checkPassword');
+
+        self::assertFalse($this->subject->check('', $this->subject->hash('')));
+        self::assertFalse($this->subject->check('mySecret123', ''));
+    }
+
+    #[Test]
+    public function needsRehashIsTrueOnlyForLegacyHashes(): void
+    {
+        self::assertTrue($this->subject->needsRehash('$argon2id$v=19$m=65536,t=16,p=1$abc$def'));
+        self::assertTrue($this->subject->needsRehash('$2y$10$abcdefghijklmnopqrstuvwxyz123456789'));
+        self::assertFalse($this->subject->needsRehash($this->subject->hash('mySecret123')));
     }
 
     #[Test]

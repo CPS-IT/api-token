@@ -75,7 +75,7 @@ class AuthenticatedAspect implements AspectInterface, SingletonInterface
      */
     protected static $method = self::METHOD_NONE;
 
-    public function __construct(AuthenticationInterface $authentication = null)
+    public function __construct(?AuthenticationInterface $authentication = null)
     {
         if ($authentication !== null) {
             self::$authenticated = $authentication->isAuthenticated();

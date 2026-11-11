@@ -25,13 +25,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TokenBuildService
 {
-    private const string MAGIC_TIME_STRING = '+1 year';
+    public const string DEFAULT_VALIDITY = '+1 year';
 
     /**
      * @param string $name
      * @param string $description
      * @param string $identifier
      * @param string $hash
+     * @param \DateTime|null $validUntil defaults to DEFAULT_VALIDITY from now
      * @return Token
      * @throws \Exception
      */
@@ -39,23 +40,42 @@ class TokenBuildService
         string $name,
         string $description,
         string $identifier,
-        string $hash
+        string $hash,
+        ?\DateTime $validUntil = null
     ): Token {
-        $duration = $this->getDuration();
         return GeneralUtility::makeInstance(Token::class)
             ->setName($name)
             ->setDescription($description)
             ->setIdentifier($identifier)
             ->setHash($hash)
-            ->setValidUntil($duration);
+            ->setValidUntil($validUntil ?? $this->parseValidUntil(self::DEFAULT_VALIDITY));
     }
 
     /**
-     * @return \DateTime
-     * @throws \Exception
+     * Parses an expiry given as interval or date ("+6 months", "2027-12-31",
+     * ISO 8601) in the server's default time zone.
+     *
+     * @throws \InvalidArgumentException for unparsable values and dates that are not in the future
      */
-    private function getDuration(): \DateTime
+    public function parseValidUntil(string $expires): \DateTime
     {
-        return new \DateTime(self::MAGIC_TIME_STRING, new \DateTimeZone(date_default_timezone_get()));
+        try {
+            $validUntil = new \DateTime($expires, new \DateTimeZone(date_default_timezone_get()));
+        } catch (\Exception $exception) {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid expiration "%s". Use formats like "+1 year", "2027-12-31" or ISO 8601.', $expires),
+                1762850001,
+                $exception
+            );
+        }
+
+        if ($validUntil->getTimestamp() <= time()) {
+            throw new \InvalidArgumentException(
+                sprintf('Expiration "%s" is not in the future.', $expires),
+                1762850002
+            );
+        }
+
+        return $validUntil;
     }
 }

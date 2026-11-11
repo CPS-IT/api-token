@@ -30,9 +30,10 @@ if (ApiTokenAuthenticator::isNotAuthenticated($request)) {
 
 ##### `returnErrorResponse(): ResponseInterface`
 
-Returns a standardized 401 error response.
+Returns a standardized 403 error response.
 
-**Returns**: PSR-7 response with 401 status code
+**Returns**: `JsonResponse` with status 403 and body
+`{"message": "Access to requested resource is forbidden.", "code": 403}`
 
 ---
 
@@ -46,10 +47,14 @@ Service class for token generation and validation.
 
 ```php
 public function __construct(
-    RandomInterface $random = null,
-    PasswordHashInterface $hashInstance = null
+    ?RandomInterface $random = null,
+    ?PasswordHashInterface $hashInstance = null
 )
 ```
+
+`$hashInstance` is only used to verify legacy hashes (see `check()`). When
+omitted, the matching TYPO3 password hash implementation is detected from
+the stored hash.
 
 #### Methods
 
@@ -86,34 +91,44 @@ $longIdentifier = $tokenService->generateIdentifier(20);
 
 ##### `hash(string $secret): string`
 
-Hashes a secret using TYPO3's password hashing.
+Hashes a secret for storage as `sha256:<hex digest>`.
+
+Secrets are 122 bit random values, not user chosen passwords, so a slow
+password hash (argon2, bcrypt) adds no protection, only verification cost.
 
 **Parameters**:
 - `$secret`: Plain text secret to hash
 
-**Returns**: Hashed password string
+**Returns**: Hash string
 
 **Example**:
 ```php
 $hash = $tokenService->hash('my-secret-token');
-// Returns: "$2y$10$abcdefghijklmnopqrstuvwxyz..."
+// Returns: "sha256:1b0f…"
 ```
 
 ##### `check(string $secret, string $saltedHash): bool`
 
-Verifies a secret against its hash.
+Verifies a secret against its stored hash, in constant time. Accepts the
+current `sha256:` format and TYPO3 password hashes of the previous format.
 
 **Parameters**:
 - `$secret`: Plain text secret
-- `$saltedHash`: Hashed password to check against
+- `$saltedHash`: Stored hash to check against
 
-**Returns**: `true` if secret matches hash, `false` otherwise
+**Returns**: `true` if secret matches hash, `false` otherwise (also for empty input)
 
 **Example**:
 ```php
-$isValid = $tokenService->check('my-secret-token', $hashedPassword);
+$isValid = $tokenService->check('my-secret-token', $storedHash);
 // Returns: true or false
 ```
+
+##### `needsRehash(string $hash): bool`
+
+From `HashUpgradeAwareInterface`. Returns `true` for legacy hash formats.
+`ApiKeyAuthentication` uses it to replace a legacy hash with the current
+format after the first successful authentication.
 
 ---
 
@@ -164,6 +179,12 @@ Authenticates using the provided secret.
 
 **Returns**: Authentication instance
 
+Authentication succeeds only if the token exists, is neither deleted nor
+disabled (`hidden`), `valid_until` lies in the future (`0` counts as
+expired) and the secret matches. Every call starts from "not
+authenticated"; an earlier result is never kept. After a successful check
+a legacy hash is upgraded (see `TokenService::needsRehash()`).
+
 **Example**:
 ```php
 $auth = new ApiKeyAuthentication($tokenService, $tokenRepository);
@@ -175,6 +196,12 @@ if ($authenticatedAuth->isAuthenticated()) {
     // Authentication successful
 }
 ```
+
+##### `forNewRequest(): self`
+
+Returns a copy without per-request state (identifier, token, result,
+method). Use it when you hold a shared instance (e.g. injected via DI) and
+authenticate more than one request with it.
 
 ##### `isAuthenticated(): bool`
 
@@ -218,15 +245,7 @@ Domain model representing an API token.
 - `description`: Token description (string)
 - `identifier`: Public token identifier (string)
 - `hash`: Hashed secret (string)
-- `validUntil`: Expiration timestamp (DateTimeImmutable)
-
-#### Methods
-
-##### `isExpired(): bool`
-
-Checks if the token has expired.
-
-**Returns**: `true` if expired, `false` if still valid
+- `validUntil`: Expiration timestamp (`?DateTime`)
 
 ---
 
@@ -240,7 +259,10 @@ Repository for token database operations.
 
 ##### `findOneRecordByIdentifier(string $identifier): array`
 
-Finds a token record by its identifier.
+Finds a token record by its identifier. Deleted and disabled (`hidden = 1`)
+tokens are not returned. Expiry is **not** filtered here - check
+`valid_until` yourself (or use `ApiKeyAuthentication`), and treat `0` as
+expired.
 
 **Parameters**:
 - `$identifier`: Token identifier
@@ -252,6 +274,10 @@ Finds a token record by its identifier.
 $tokenData = $repository->findOneRecordByIdentifier('abc123');
 // Returns: ['uid' => 1, 'name' => 'Token', 'identifier' => 'abc123', ...]
 ```
+
+##### `updateHash(int $uid, string $hash): void`
+
+Replaces the stored hash of a token (used to upgrade legacy hashes).
 
 ---
 
@@ -349,7 +375,10 @@ PSR-15 middleware for automatic authentication.
 
 ##### `process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface`
 
-Processes the request through the authentication middleware.
+Evaluates the `x-api-identifier` / `application-authorization` headers and
+stores the result in the `RestApiAuthenticated` context aspect. It never
+rejects a request itself - your endpoint decides via
+`ApiTokenAuthenticator::isNotAuthenticated()`.
 
 **Parameters**:
 - `$request`: PSR-7 server request
@@ -357,18 +386,12 @@ Processes the request through the authentication middleware.
 
 **Returns**: PSR-7 response
 
-**Usage in Configuration**:
-```php
-// Configuration/RequestMiddlewares.php
-return [
-    'frontend' => [
-        'api-authentication' => [
-            'target' => \CPSIT\ApiToken\Middleware\ApiKeyAuthenticator::class,
-            'before' => ['your-api-handler']
-        ]
-    ]
-];
-```
+The extension already registers this middleware for the frontend
+(`cpsit/api-token/api-key-authenticator`, after
+`typo3/cms-frontend/page-argument-validator`). Do not register it a second
+time. It runs on every frontend request with a resolved page route; requests
+without both headers, or with an HTTP method outside
+`RestApiInterface::VALID_METHODS`, are simply not authenticated.
 
 ---
 
@@ -388,11 +411,13 @@ Command for generating API tokens via CLI.
 
 #### Options
 
-- `--name, -n`: Token name (required)
+- `--name`: Token name (asked interactively if omitted)
 - `--description, -d`: Token description (optional)
-- `--expires, -e`: Expiration date (default: +1 year)
-- `--no-interaction, -N`: Non-interactive mode
-- `--output-format, -f`: Output format (text, json, yaml)
+- `--expires, -e`: Expiration as interval or date (default: `+1 year`)
+- `--json, -j`: Output as JSON
+- `--no-interaction, -n`: Symfony's standard non-interactive flag
+
+See [CLI Commands](CliCommands.md) for details.
 
 ---
 
@@ -412,15 +437,18 @@ Lists all tokens in the backend module.
 
 ##### `newAction(): ResponseInterface`
 
-Shows the token creation form.
+Shows the token creation form (name and description).
 
-##### `createAction(): ResponseInterface`
+##### `createAction(array $newToken): ResponseInterface`
 
-Creates a new token.
+Generates identifier, secret and hash server-side, stores the token and
+shows identifier and secret once. Only `name` and `description` are taken
+from the form.
 
-##### `deleteAction(): ResponseInterface`
+##### `deleteAction(int $tokenUid): ResponseInterface`
 
-Deletes an existing token.
+Deletes a token via DataHandler (POST only). See
+[Backend Module](BackendModule.md).
 
 ---
 
@@ -455,36 +483,28 @@ All authenticated API requests must include these headers:
 
 ### Authentication Errors
 
-#### 401 Unauthorized
-
-**Causes**:
-- Missing authentication headers
-- Invalid identifier or secret
-- Expired token
-
-**Response Format**:
-```json
-{
-    "error": "Authentication required",
-    "message": "Missing or invalid authentication credentials",
-    "code": 401
-}
-```
+`ApiTokenAuthenticator::returnErrorResponse()` answers every failed
+authentication with the same response, so clients cannot tell which check
+failed:
 
 #### 403 Forbidden
 
 **Causes**:
-- Valid token but insufficient permissions
-- IP restrictions (if implemented)
+- Missing authentication headers
+- Unknown identifier or wrong secret
+- Expired token (`valid_until` in the past or `0`)
+- Disabled (`hidden`) or deleted token
 
 **Response Format**:
 ```json
 {
-    "error": "Forbidden",
-    "message": "Access denied",
+    "message": "Access to requested resource is forbidden.",
     "code": 403
 }
 ```
+
+If you need different status codes, build your own response instead of
+calling `returnErrorResponse()`.
 
 ---
 
@@ -502,14 +522,13 @@ Token storage table structure.
 | `pid` | int | Page ID (TYPO3) |
 | `name` | varchar(255) | Human-readable name |
 | `description` | text | Token description |
-| `identifier` | varchar(255) | Public identifier |
-| `hash` | varchar(255) | Hashed secret |
-| `valid_until` | int | Expiration timestamp |
+| `identifier` | tinytext | Public identifier (not indexed, not unique) |
+| `hash` | varchar(255) | `sha256:<hex>`, or a legacy TYPO3 password hash |
+| `valid_until` | int | Expiration timestamp; `0` = expired |
 | `tstamp` | int | Last modification timestamp |
 | `crdate` | int | Creation timestamp |
-| `cruser_id` | int | Creator user ID |
-| `deleted` | tinyint | Soft delete flag |
-| `hidden` | tinyint | Hidden flag |
+| `deleted` | tinyint | Soft delete flag (deleted tokens never authenticate) |
+| `hidden` | tinyint | Disabled flag (disabled tokens never authenticate) |
 
 ---
 
@@ -533,7 +552,8 @@ Custom events fired during token operations (planned for future versions):
 
 **Code**: `1585497878`
 
-**Thrown when**: Invalid HTTP method is provided to authentication
+**Thrown when**: Invalid HTTP method is passed to `ApiKeyAuthentication::withMethod()`.
+The middleware checks the method beforehand and does not throw it.
 
 **Example**:
 ```php
@@ -577,21 +597,23 @@ ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION // 'application-authorization'
 
 ### Token Data Array
 
-Structure returned by `TokenRepository::findOneRecordByIdentifier()`:
+Structure returned by `TokenRepository::findOneRecordByIdentifier()`
+(never a deleted or disabled token):
 
 ```php
 [
     'uid' => int,
+    'pid' => int,
     'name' => string,
-    'description' => string|null,
+    'description' => string,
     'identifier' => string,
     'hash' => string,
-    'valid_until' => int, // Unix timestamp
+    'valid_until' => int, // Unix timestamp, 0 = expired
     'tstamp' => int,
     'crdate' => int,
-    'cruser_id' => int,
-    'deleted' => int,
-    'hidden' => int
+    'deleted' => int, // always 0
+    'hidden' => int,  // always 0
+    'sorting' => int,
 ]
 ```
 
@@ -608,31 +630,17 @@ Structure returned by `TokenRepository::findOneRecordByIdentifier()`:
 
 ### Breaking Changes
 
-See [Migration Guide](Migration.md) for details on breaking changes between versions.
+See the [Changelog](Changelog.md).
 
 ---
 
 ## Performance Considerations
 
-### Caching
-
-- Token validation queries are not cached by default
-- Consider implementing custom caching for high-traffic scenarios
-- Database indexes exist on `identifier` column for fast lookups
-
-### Database Optimization
-
-```sql
--- Recommended indexes (automatically created)
-CREATE INDEX identifier ON tx_apitoken_domain_model_token (identifier);
-CREATE INDEX valid_until ON tx_apitoken_domain_model_token (valid_until);
-```
-
-### Memory Usage
-
-- Token generation uses minimal memory
-- No persistent objects stored in memory
-- Suitable for high-concurrency scenarios
+- Token validation queries are not cached.
+- Only requests carrying both authentication headers hit the database.
+- `identifier` is not indexed (`TINYTEXT`); token tables are expected to be small.
+- Verifying a current (`sha256:`) hash is cheap. Hashes in the previous format
+  (argon2/bcrypt) are slow to verify and are replaced on first successful use.
 
 ---
 
@@ -640,15 +648,17 @@ CREATE INDEX valid_until ON tx_apitoken_domain_model_token (valid_until);
 
 ### Token Security
 
-- Secrets are never stored in plain text
-- Uses TYPO3's `PasswordHashFactory` for secure hashing
-- Cryptographically secure random generation
+- Secrets are never stored in plain text, only as SHA-256 digest
+- Cryptographically secure random generation (122 bit secrets)
+- Disabling a token (`hidden`) revokes it immediately; so does deleting it
+- Tokens are not scoped: every valid token passes every endpoint that uses
+  `ApiTokenAuthenticator`. Implement scoping in your endpoint if you need it.
 
 ### Best Practices
 
 1. **Token Rotation**: Regularly rotate long-lived tokens
-2. **Scope Limitation**: Use different tokens for different purposes
-3. **Monitoring**: Log authentication attempts
+2. **Short Lifetimes**: Use `--expires` for tokens used by automation
+3. **Revocation**: Disable or delete a token as soon as it may have leaked
 4. **Transport Security**: Always use HTTPS in production
 5. **Storage Security**: Never commit tokens to version control
 

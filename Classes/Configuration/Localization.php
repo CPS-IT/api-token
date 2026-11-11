@@ -71,7 +71,7 @@ abstract class Localization
      * @param bool $translate
      * @return string
      */
-    public static function forField(string $fieldName, string $tableName, string $item = null, bool $translate = false): string
+    public static function forField(string $fieldName, string $tableName, ?string $item = null, bool $translate = false): string
     {
         $localizationKey = $tableName . '.' . $fieldName;
         if (is_string($item) && strlen($item) > 0) {
@@ -87,7 +87,7 @@ abstract class Localization
      * @param bool $translate
      * @return string
      */
-    public static function forPageType(int $pageType, string $state = null, bool $translate = false): string
+    public static function forPageType(int $pageType, ?string $state = null, bool $translate = false): string
     {
         return static::forField('doktype', 'pages', $pageType . ($state !== null ? '.' . $state : ''), $translate);
     }
@@ -193,7 +193,7 @@ abstract class Localization
      * @param string|null $language
      * @return string
      */
-    protected static function buildLocalizationString(string $type = self::TYPE_DEFAULT, string $localizationKey = null, string $language = null): string
+    protected static function buildLocalizationString(string $type = self::TYPE_DEFAULT, ?string $localizationKey = null, ?string $language = null): string
     {
         $fileName = self::FILES[$type] ?: self::FILES[self::TYPE_DEFAULT];
         $language = $language ? ($language . '.') : '';

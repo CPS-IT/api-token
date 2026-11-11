@@ -80,7 +80,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $name
      * @param TokenService|null $tokenService
      */
-    public function __construct(string $name = null, TokenBuildService $tokenBuildService = null, TokenService $tokenService = null, TokenRepository $repository = null)
+    public function __construct(?string $name = null, ?TokenBuildService $tokenBuildService = null, ?TokenService $tokenService = null, ?TokenRepository $repository = null)
     {
         parent::__construct($name);
 
@@ -107,6 +107,13 @@ class GenerateTokenCommand extends Command
             'Optional token description'
         );
         $this->addOption(
+            'expires',
+            'e',
+            InputOption::VALUE_REQUIRED,
+            'Expiration as interval or date, e.g. "+6 months", "2027-12-31", ISO 8601',
+            TokenBuildService::DEFAULT_VALIDITY
+        );
+        $this->addOption(
             'json',
             'j',
             InputOption::VALUE_NONE,
@@ -129,6 +136,18 @@ class GenerateTokenCommand extends Command
         $name = $input->getOption('name') ?? null;
         $description = $input->getOption('description') ?? null;
         $json = (bool)$input->getOption('json');
+
+        // Validate expiry before asking anything interactively
+        try {
+            $validUntil = $this->tokenBuildService->parseValidUntil((string)$input->getOption('expires'));
+        } catch (\InvalidArgumentException $exception) {
+            if (!$json) {
+                $this->io->error($exception->getMessage());
+            } else {
+                $this->io->writeln(json_encode(['error' => $exception->getMessage()]));
+            }
+            return 1;
+        }
 
         // Process "name" option
         $name = $this->processName($name);
@@ -162,7 +181,8 @@ class GenerateTokenCommand extends Command
                 $name,
                 $description,
                 $identifier,
-                $hash
+                $hash,
+                $validUntil
             )
         );
 
@@ -171,6 +191,7 @@ class GenerateTokenCommand extends Command
                 'Your token was successfully generated.',
                 'Identifier: ' . $identifier,
                 'Secret: ' . $secret,
+                'Valid until: ' . $validUntil->format(\DateTimeInterface::ATOM),
                 '(Please keep information safely and secure. Token is shown only once.)',
             ]);
         } else {
@@ -179,6 +200,7 @@ class GenerateTokenCommand extends Command
                 'description' => $description,
                 'identifier' => $identifier,
                 'secret' => $secret,
+                'valid_until' => $validUntil->format(\DateTimeInterface::ATOM),
             ], JSON_THROW_ON_ERROR));
         }
 
@@ -189,7 +211,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $name
      * @return string|null
      */
-    protected function processName(string $name = null): ?string
+    protected function processName(?string $name = null): ?string
     {
         if ($name === null) {
             $question = new Question('Please enter the token name');
@@ -211,7 +233,7 @@ class GenerateTokenCommand extends Command
      * @param string|null $description
      * @return string
      */
-    protected function processDescription(string $description = null): string
+    protected function processDescription(?string $description = null): string
     {
         if ($description === null) {
             $question = new Question('Please enter a description for the token', '');

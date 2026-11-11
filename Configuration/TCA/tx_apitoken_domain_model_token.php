@@ -112,14 +112,6 @@ return [
                     description,
                 --div--;' . \CPSIT\ApiToken\Configuration\Localization::forTab('access', true) . ',
                     hidden,
-                    --palette--;;access,
-            ',
-        ],
-    ],
-    'palettes' => [
-        'access' => [
-            'showitem' => '
-                starttime, endtime
             ',
         ],
     ],

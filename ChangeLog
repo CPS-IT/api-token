@@ -1,3 +1,6 @@
+2026-11-11         [RELEASE] Release of api-token 1.1.0 (Benjamin Rannow)
+2026-11-11 925ae9c [TASK] Rework token validation and token management (Benjamin Rannow)
+2025-11-28 fde8ca1 add correct nullable params, avoid deprecations (Benjamin Rannow)
 2025-05-28         [RELEASE] Release of api-token 1.0.0 (Vladimir Falcón Piva)
 2025-05-26 d246c02  TYPO3 v12/v13 compatibility upgrade with modern development stack (#2) (Vladimir Falcon Piva)
 2025-05-25 ec75bd4 FIX: Grant database permissions for functional tests in GitHub Actions (Vladimir Falcón Piva)

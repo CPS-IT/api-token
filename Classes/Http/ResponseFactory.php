@@ -54,7 +54,7 @@ class ResponseFactory
      * @param string|null $reason
      * @return JsonResponse
      */
-    public static function createNotFoundResponse(string $reason = null): JsonResponse
+    public static function createNotFoundResponse(?string $reason = null): JsonResponse
     {
         $reason ??= 'Resource not found.';
         return static::createErroneousResponse(404, $reason);
@@ -64,7 +64,7 @@ class ResponseFactory
      * @param string|null $reason
      * @return JsonResponse
      */
-    public static function createForbiddenResponse(string $reason = null): JsonResponse
+    public static function createForbiddenResponse(?string $reason = null): JsonResponse
     {
         $reason ??= 'Access to requested resource is forbidden.';
         return static::createErroneousResponse(403, $reason);
@@ -74,7 +74,7 @@ class ResponseFactory
      * @param string|null $reason
      * @return JsonResponse
      */
-    public static function createUnauthorizedResponse(string $reason = null): JsonResponse
+    public static function createUnauthorizedResponse(?string $reason = null): JsonResponse
     {
         $reason ??= 'Requested resource needs authentication.';
         return static::createErroneousResponse(401, $reason);
@@ -84,7 +84,7 @@ class ResponseFactory
      * @param string|null $reason
      * @return JsonResponse
      */
-    public static function createBadRequestResponse(string $reason = null): JsonResponse
+    public static function createBadRequestResponse(?string $reason = null): JsonResponse
     {
         $reason ??= 'Request contains bad parameters.';
         return static::createErroneousResponse(400, $reason);
@@ -95,7 +95,7 @@ class ResponseFactory
      * @param \Exception|null $exception
      * @return JsonResponse
      */
-    public static function createInternalServerErrorResponse(string $reason = null, \Exception $exception = null): JsonResponse
+    public static function createInternalServerErrorResponse(?string $reason = null, ?\Exception $exception = null): JsonResponse
     {
         $reason ??= 'Error during API request' . ($exception !== null ? ': ' . $exception->getMessage() : '.');
         return static::createErroneousResponse(500, $reason);
