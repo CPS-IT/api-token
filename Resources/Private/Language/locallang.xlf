@@ -84,6 +84,33 @@
 			<trans-unit id="module.button.edit">
 				<source>Edit</source>
 			</trans-unit>
+			<trans-unit id="module.token.state.disabled">
+				<source>disabled (revoked)</source>
+			</trans-unit>
+			<trans-unit id="button.delete">
+				<source>Delete</source>
+			</trans-unit>
+			<trans-unit id="button.backToList">
+				<source>Back to token list</source>
+			</trans-unit>
+			<trans-unit id="module.token.delete.confirm.title">
+				<source>Delete API token?</source>
+			</trans-unit>
+			<trans-unit id="module.token.delete.confirm.body">
+				<source>Requests using this token are rejected immediately. Clients that still use it will stop working.</source>
+			</trans-unit>
+			<trans-unit id="module.tokenCreated.header">
+				<source>API token created</source>
+			</trans-unit>
+			<trans-unit id="message.tokenDeleted">
+				<source>The token was deleted.</source>
+			</trans-unit>
+			<trans-unit id="message.tokenDeleteFailed">
+				<source>The token could not be deleted.</source>
+			</trans-unit>
+			<trans-unit id="message.nameRequired">
+				<source>Please enter a name for the token.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

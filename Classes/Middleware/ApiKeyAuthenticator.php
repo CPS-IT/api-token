@@ -21,8 +21,8 @@ declare(strict_types=1);
 namespace CPSIT\ApiToken\Middleware;
 
 use CPSIT\ApiToken\Authentication\ApiKeyAuthentication;
+use CPSIT\ApiToken\Configuration\RestApiInterface;
 use CPSIT\ApiToken\Context\AuthenticatedAspect;
-use CPSIT\ApiToken\Exception\InvalidHttpMethodException;
 use CPSIT\ApiToken\Request\Validation\ResolvedRouteValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -66,7 +66,6 @@ class ApiKeyAuthenticator implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws InvalidHttpMethodException
      */
     #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -82,24 +81,29 @@ class ApiKeyAuthenticator implements MiddlewareInterface
     }
 
     /**
+     * Runs for every frontend request with a resolved route, so it must
+     * never throw: an unsupported HTTP method simply stays unauthenticated.
+     *
      * @param ServerRequestInterface $request
-     * @throws InvalidHttpMethodException
      * @throws \Exception
      */
     protected function setApiAuthenticatedAspect(ServerRequestInterface $request): void
     {
-        $this->authentication->withMethod($request->getMethod());
+        // The injected instance is a shared service; work on a stateless copy
+        // so nothing from a previous request (or another consumer) carries over.
+        $authentication = $this->authentication->forNewRequest();
 
-        if ($request->hasHeader(ApiKeyAuthentication::HEADER_NAME_IDENTIFIER)) {
-            $identifierHeader = $request->getHeader(ApiKeyAuthentication::HEADER_NAME_IDENTIFIER);
-            $this->authentication->withIdentifier($identifierHeader[0]);
-        }
-        if ($request->hasHeader(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION)) {
-            $authHeader = $request->getHeader(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION);
-            $this->authentication->fromHeader($authHeader[0]);
+        if (
+            in_array($request->getMethod(), RestApiInterface::VALID_METHODS, true)
+            && $request->hasHeader(ApiKeyAuthentication::HEADER_NAME_IDENTIFIER)
+            && $request->hasHeader(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION)
+        ) {
+            $authentication->withMethod($request->getMethod());
+            $authentication->withIdentifier($request->getHeader(ApiKeyAuthentication::HEADER_NAME_IDENTIFIER)[0]);
+            $authentication->fromHeader($request->getHeader(ApiKeyAuthentication::HEADER_NAME_AUTHORIZATION)[0]);
         }
 
-        $aspect = new AuthenticatedAspect($this->authentication);
+        $aspect = new AuthenticatedAspect($authentication);
         $this->context->setAspect(AuthenticatedAspect::ASPECT_NAME, $aspect);
     }
 }
